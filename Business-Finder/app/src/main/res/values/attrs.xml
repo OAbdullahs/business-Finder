@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <attr name="search_restaurants" format="reference"/>
+    <attr name="search_icon" format="reference"/>
+    <attr name="category_text_main" format="reference"/>
+</resources>

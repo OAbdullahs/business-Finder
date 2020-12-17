@@ -12,5 +12,10 @@
         <!-- Status bar color. -->
         <item name="android:statusBarColor" tools:targetApi="l">?attr/colorPrimaryVariant</item>
         <!-- Customize your theme here. -->
+        <item name="android:textColor">@color/white</item>
+        <item name="search_restaurants">@drawable/main_search_design_night</item>
+        <item name="search_icon">@drawable/search_icon_night</item>
+        <item name="category_text_main">@drawable/category_name_night</item>
+
     </style>
 </resources>

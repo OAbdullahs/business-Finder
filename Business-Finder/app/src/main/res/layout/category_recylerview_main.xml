@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <data>
+        <variable
+            name="viewModel"
+            type="com.abdullahalomair.businessfinder.viewmodels.CategoryRecyclerViewMain" />
+    </data>
+<androidx.constraintlayout.widget.ConstraintLayout
+    android:layout_marginTop="2dp"
+    android:layout_marginEnd="10dp"
+    android:layout_width="wrap_content"
+    android:layout_height="50dp"
+    android:background="?category_text_main"
+    >
+        <TextView
+            android:padding="5dp"
+            android:id="@+id/name_test"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:minWidth="150dp"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:onClick="@{() -> viewModel.onBottomClick()}"
+            android:text="@{viewModel.categoryName}"
+
+            />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

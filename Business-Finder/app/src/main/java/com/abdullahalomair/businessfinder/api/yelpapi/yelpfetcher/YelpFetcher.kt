@@ -3,6 +3,7 @@ package com.abdullahalomair.businessfinder.api.yelpapi.yelpfetcher
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.abdullahalomair.businessfinder.api.yelpapi.YelpApi
+import com.abdullahalomair.businessfinder.model.yelpmodel.BusinessDetails
 import com.abdullahalomair.businessfinder.model.yelpmodel.BusinessesList
 import retrofit2.Call
 import retrofit2.Callback
@@ -21,6 +22,26 @@ class YelpFetcher {
             .build()
         yelpApi = retrofit.create(YelpApi::class.java)
 
+    }
+
+    fun getBusinessDetails(businessID:String):LiveData<BusinessDetails>{
+        val mutableLiveData: MutableLiveData<BusinessDetails> = MutableLiveData()
+        val call: Call<BusinessDetails> = yelpApi.getBusinessesDetails(businessID)
+
+        call.enqueue(object : Callback<BusinessDetails>{
+            override fun onResponse(
+                call: Call<BusinessDetails>,
+                response: Response<BusinessDetails>
+            ) {
+                mutableLiveData.value = response.body()
+            }
+
+            override fun onFailure(call: Call<BusinessDetails>, t: Throwable) {
+                throw t
+            }
+
+        })
+        return mutableLiveData
     }
 
      fun  getBusinessesByLocation(location:String): LiveData<BusinessesList> {

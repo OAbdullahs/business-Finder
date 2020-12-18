@@ -14,6 +14,9 @@ import com.abdullahalomair.businessfinder.controllers.CategoryAdapter
 import com.abdullahalomair.businessfinder.controllers.MainActivity
 import com.abdullahalomair.businessfinder.model.yelpmodel.BusinessesList
 import com.abdullahalomair.businessfinder.model.yelpmodel.Categories
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
+import io.reactivex.rxjava3.core.Scheduler
+import io.reactivex.rxjava3.schedulers.Schedulers
 import kotlinx.coroutines.*
 
 
@@ -23,6 +26,10 @@ class MainFragmentViewModel(private val activity: MainActivity): BaseObservable(
       fun getBusinessList(location:String): LiveData<BusinessesList> {
         return repository.getBusinessList(location)
     }
+
+
+
+
     suspend fun  getFinalCategoryData(data: BusinessesList): MutableList<Pair<String, Int>> {
         val finalResult:MutableList<Pair<String,Int>>
             //Get Data from Server Then extract what needed

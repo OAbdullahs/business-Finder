@@ -22,7 +22,7 @@
             android:layout_gravity="center"
             android:gravity="center"
             android:onClick="@{() -> viewModel.onBottomClick()}"
-            android:text="@{viewModel.categoryName}"
+            android:text="@{viewModel.categoryName +' '+'('+viewModel.categorySize+')'}"
 
             />
 

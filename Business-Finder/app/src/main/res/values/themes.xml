@@ -16,7 +16,6 @@
         <item name="search_restaurants">@drawable/main_search_design_day</item>
         <item name="search_icon">@drawable/search_icon_day</item>
         <item name="category_text_main">@drawable/category_name_day</item>
-
     </style>
 
 

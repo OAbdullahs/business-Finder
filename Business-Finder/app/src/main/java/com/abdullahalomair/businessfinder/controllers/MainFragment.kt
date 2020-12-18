@@ -1,28 +1,27 @@
 package com.abdullahalomair.businessfinder.controllers
 
-import android.content.Context
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.LinearLayout
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.MutableLiveData
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.LinearSnapHelper
 import androidx.recyclerview.widget.RecyclerView
 import com.abdullahalomair.businessfinder.R
 import com.abdullahalomair.businessfinder.databinding.MainFragmentBinding
-import com.abdullahalomair.businessfinder.model.yelpmodel.BusinessesList
-import com.abdullahalomair.businessfinder.model.yelpmodel.Categories
-import com.abdullahalomair.businessfinder.sharedpreference.EncryptSharedPreferences
+import com.abdullahalomair.businessfinder.model.yelpmodel.Businesses
 import com.abdullahalomair.businessfinder.viewmodels.MainFragmentViewModel
 import kotlinx.coroutines.*
 
 private const val CATEGORY_POSITION = "Category_Position"
+private const val ALL_CATEGORY = "All"
 class MainFragment: Fragment() {
 private lateinit var binding: MainFragmentBinding
 private lateinit var categoryAdapter: CategoryAdapter
+private lateinit var recentAdapter: RestaurantAdapter
     private val scope = CoroutineScope(Dispatchers.IO)
 
 
@@ -36,6 +35,11 @@ private lateinit var categoryAdapter: CategoryAdapter
             container,false)
         binding.categoryProgressBar.visibility = View.GONE
         binding.categoryProgressBar.visibility = View.VISIBLE
+        binding.recentVisitRecyclerview.apply {
+            layoutManager  = LinearLayoutManager(requireContext())
+        }
+        val scrollHelper = LinearSnapHelper()
+        scrollHelper.attachToRecyclerView(binding.recentVisitRecyclerview)
         binding.viewModel =  MainFragmentViewModel(requireActivity() as MainActivity)
         return binding.root
     }
@@ -66,10 +70,31 @@ private lateinit var categoryAdapter: CategoryAdapter
                         }
                     }
                 }
+            updateRecyclerView(busnissesData.businesses)
+            categoryName.observe(
+                    requireActivity(),{data ->
+                    if (data == ALL_CATEGORY){
+                        updateRecyclerView(busnissesData.businesses)
+                    }else{
+                        updateRecyclerView(busnissesData.businesses.filter {
+                                business -> business.categories.filter{
+                                titles -> titles.title == data }.isNotEmpty()
+                        }
+                        )
+                    }
+
             }
+            )
+            }
+
         )
+    }
+    private fun updateRecyclerView(business: List<Businesses>){
+        binding.recentVisitRecyclerview.apply {
+            recentAdapter = RestaurantAdapter(requireActivity() as MainActivity,requireContext(),business)
+            adapter = recentAdapter
 
-
+        }
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -79,7 +104,16 @@ private lateinit var categoryAdapter: CategoryAdapter
     }
 
 
+
+
+
+
     companion object{
+        private val categoryName: MutableLiveData<String> = MutableLiveData()
+         fun getData(data: String){
+             categoryName.value = data
+        }
+
         fun newInstance(): MainFragment {
             return MainFragment()
         }

@@ -2,7 +2,9 @@ package com.abdullahalomair.businessfinder.controllers
 
 import android.content.Context
 import androidx.lifecycle.LiveData
+import com.abdullahalomair.businessfinder.api.weatherapi.weatherfetcher.WeatherFetcher
 import com.abdullahalomair.businessfinder.api.yelpapi.yelpfetcher.YelpFetcher
+import com.abdullahalomair.businessfinder.model.wathermodel.WeatherModel
 import com.abdullahalomair.businessfinder.model.yelpmodel.BusinessDetails
 import com.abdullahalomair.businessfinder.model.yelpmodel.BusinessesList
 
@@ -14,6 +16,9 @@ class BusinessRepository private constructor(context: Context){
     }
     fun getBusinessDetail(businessId: String): LiveData<BusinessDetails>{
         return YelpFetcher().getBusinessDetails(businessId)
+    }
+    fun getWeatherData(location: String): LiveData<WeatherModel>{
+        return WeatherFetcher().getWeatherByLocation(location)
     }
 
     companion object{

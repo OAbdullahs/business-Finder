@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:tools="http://schemas.android.com/tools"
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:card_view="http://schemas.android.com/apk/res-auto">
+    xmlns:card_view="http://schemas.android.com/apk/res-auto"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
     <data>
         <variable
             name="viewModel"
@@ -10,7 +11,8 @@
 
 <androidx.constraintlayout.widget.ConstraintLayout
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    >
 
     <androidx.cardview.widget.CardView
         android:layout_width="0dp"
@@ -31,16 +33,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/restaurant_images_recyclerview"
-                android:layout_width="match_parent"
-                android:layout_height="200dp"
-                android:layout_marginStart="10dp"
-                android:layout_marginTop="10dp"
-                android:layout_marginEnd="10dp"
-                card_view:layout_constraintEnd_toEndOf="parent"
-                card_view:layout_constraintStart_toStartOf="parent"
-                card_view:layout_constraintTop_toTopOf="parent" />
+
 
             <TextView
                 android:id="@+id/business_name"
@@ -68,6 +61,7 @@
                 style="?attr/ratingBarStyleSmall"
                 android:layout_width="wrap_content"
                 android:layout_height="20dp"
+                android:layout_marginTop="5dp"
                 android:numStars="5"
                 android:progressTint="@color/gold"
                 android:rating="@{viewModel.ratingBusiness}"
@@ -75,17 +69,63 @@
                 card_view:layout_constraintTop_toBottomOf="@+id/business_name"
                 tools:rating="3" />
 
+
             <TextView
                 android:id="@+id/is_open_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="5dp"
-                android:layout_marginBottom="10dp"
+                android:layout_marginBottom="5dp"
                 android:text="@{viewModel.isBusinessOpen}"
                 card_view:layout_constraintBottom_toBottomOf="parent"
                 card_view:layout_constraintStart_toStartOf="@+id/busnisses_type"
                 card_view:layout_constraintTop_toBottomOf="@+id/busnisses_type"
                 tools:text="Open" />
+
+            <ImageView
+                android:id="@+id/restaurant_main_image"
+                android:layout_width="295dp"
+                android:layout_height="195dp"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="10dp"
+                android:scaleType="centerCrop"
+                card_view:layout_constraintStart_toStartOf="parent"
+                card_view:layout_constraintTop_toTopOf="parent"
+                tools:srcCompat="@tools:sample/avatars" />
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/restaurant_images_recyclerview"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_marginEnd="10dp"
+                card_view:layout_constraintBottom_toBottomOf="@+id/restaurant_main_image"
+                card_view:layout_constraintEnd_toEndOf="parent"
+                card_view:layout_constraintStart_toEndOf="@+id/restaurant_main_image"
+                card_view:layout_constraintTop_toTopOf="@+id/restaurant_main_image" />
+
+            <TextView
+                android:id="@+id/weather_value"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="5dp"
+                android:layout_marginBottom="5dp"
+                android:gravity="left"
+                android:text="@{viewModel.weatherValue}"
+                android:textSize="19sp"
+                card_view:layout_constraintBottom_toBottomOf="parent"
+                card_view:layout_constraintEnd_toEndOf="parent"
+                tools:text="Weather value" />
+
+            <com.airbnb.lottie.LottieAnimationView
+                android:id="@+id/weather_animation"
+                android:layout_width="55dp"
+                android:layout_height="55dp"
+                app:lottie_autoPlay="true"
+                app:lottie_loop="true"
+                app:lottie_rawRes="@{viewModel.weatherStatusAnimation}"
+                card_view:layout_constraintBottom_toBottomOf="@+id/weather_value"
+                card_view:layout_constraintEnd_toStartOf="@+id/weather_value"
+                card_view:layout_constraintTop_toTopOf="@+id/weather_value"
+                tools:srcCompat="@tools:sample/avatars" />
 
 
         </androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,13 +1,14 @@
 package com.abdullahalomair.businessfinder.controllers
 
 import android.content.Context
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.LinearSnapHelper
-import androidx.recyclerview.widget.RecyclerView
+import android.util.Log
+import androidx.recyclerview.widget.*
 import com.abdullahalomair.businessfinder.R
 import com.abdullahalomair.businessfinder.databinding.TopRatingBusinessBinding
+import com.abdullahalomair.businessfinder.getWeatherAnimationName
 import com.abdullahalomair.businessfinder.model.yelpmodel.Businesses
 import com.abdullahalomair.businessfinder.viewmodels.TopRatingBusinesses
+import com.bumptech.glide.Glide
 
 
 class RestaurantHolder(private val activity: MainActivity,
@@ -18,13 +19,17 @@ class RestaurantHolder(private val activity: MainActivity,
     init {
         binding.viewModel = TopRatingBusinesses()
         binding.restaurantImagesRecyclerview.layoutManager =
-            LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL,false)
+            StaggeredGridLayoutManager(3,LinearLayoutManager.HORIZONTAL)
         val scrollHelper = LinearSnapHelper()
         scrollHelper.attachToRecyclerView(binding.restaurantImagesRecyclerview)
     }
 
         fun bind(allData: Businesses){
+            Glide.with(itemView)
+                .load(allData.imageUrl)
+                .into(binding.restaurantMainImage)
             displayPhotos(allData)
+            displayWeatherData("${allData.coordinates.latitude},${allData.coordinates.longitude}")
             val isBusinessClosed = if (allData.isClosed)
             {
                 context.getString(R.string.business_closed)
@@ -40,6 +45,17 @@ class RestaurantHolder(private val activity: MainActivity,
                 viewModel?.ratingBusiness = allData.rating.toFloat()
             }
         }
+        private fun displayWeatherData(location:String){
+            binding.viewModel?.getWeatherDetails(location)?.observeForever { data ->
+                binding.apply {
+                    val weatherStatus = getWeatherAnimationName(data.current.condition.code)
+                    viewModel?.weatherStatusAnimation = "@raw/w_sunny"
+                    viewModel?.weatherValue = data.current.tempC.toString()
+                }
+
+            }
+        }
+
         private fun displayPhotos(allData: Businesses){
             try {
                 binding.viewModel?.getBusinessDetail(allData.id)?.observeForever { data ->

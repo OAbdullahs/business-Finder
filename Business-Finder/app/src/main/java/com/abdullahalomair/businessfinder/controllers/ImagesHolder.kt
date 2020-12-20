@@ -9,7 +9,7 @@ import com.bumptech.glide.Glide
 import kotlinx.coroutines.*
 
 
-class ImagesHolder(private val activity: MainActivity,private val binding:ImagesRecyclerviewDispalyBinding)
+class ImagesHolder(private val binding:ImagesRecyclerviewDispalyBinding)
     :RecyclerView.ViewHolder(binding.root) {
 
         fun bind(url:String){

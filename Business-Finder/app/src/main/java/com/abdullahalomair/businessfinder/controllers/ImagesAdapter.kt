@@ -8,8 +8,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.abdullahalomair.businessfinder.R
 import com.abdullahalomair.businessfinder.databinding.ImagesRecyclerviewDispalyBinding
 
-class ImagesAdapter(private val activity: MainActivity,
-                    private val context: Context,
+class ImagesAdapter(private val context: Context,
                     private val images:List<String>)
     : RecyclerView.Adapter<ImagesHolder>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ImagesHolder {
@@ -19,7 +18,7 @@ class ImagesAdapter(private val activity: MainActivity,
             parent,
             false
         )
-        return ImagesHolder(activity,binding)
+        return ImagesHolder(binding)
     }
 
     override fun onBindViewHolder(holder: ImagesHolder, position: Int) {

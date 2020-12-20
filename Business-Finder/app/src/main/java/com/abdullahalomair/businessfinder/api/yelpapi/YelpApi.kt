@@ -3,6 +3,7 @@ package com.abdullahalomair.businessfinder.api.yelpapi
 import com.abdullahalomair.businessfinder.model.yelpmodel.BusinessDetails
 import com.abdullahalomair.businessfinder.model.yelpmodel.BusinessesList
 import retrofit2.Call
+import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.Headers
 import retrofit2.http.Path
@@ -18,5 +19,5 @@ interface YelpApi {
 
     @Headers("Authorization: Bearer $API_KEY")
     @GET("{id}")
-    fun getBusinessesDetails(@Path("id") businessId:String): Call<BusinessDetails>
+    suspend fun getBusinessesDetails(@Path("id") businessId:String): Response<BusinessDetails>
 }

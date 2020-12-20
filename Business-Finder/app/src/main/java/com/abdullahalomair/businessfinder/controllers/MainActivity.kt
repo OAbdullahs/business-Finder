@@ -5,6 +5,7 @@ import android.os.Bundle
 import androidx.databinding.DataBindingUtil
 import com.abdullahalomair.businessfinder.R
 import com.abdullahalomair.businessfinder.databinding.ActivityMainBinding
+import com.abdullahalomair.businessfinder.viewmodels.MainFragmentViewModel
 
 class MainActivity : AppCompatActivity() {
     private lateinit var mainBinding: ActivityMainBinding

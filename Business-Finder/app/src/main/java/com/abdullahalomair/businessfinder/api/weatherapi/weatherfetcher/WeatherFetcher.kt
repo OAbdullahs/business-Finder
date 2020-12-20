@@ -21,21 +21,7 @@ class WeatherFetcher {
 
     }
 
-    fun  getWeatherByLocation(location:String): LiveData<WeatherModel> {
-        val call: Call<WeatherModel> = weatherApi.getCurrentWeatherData(location)
-        val responseLiveData: MutableLiveData<WeatherModel> = MutableLiveData()
-        call.enqueue(object : Callback<WeatherModel> {
-            override fun onResponse(
-                call: Call<WeatherModel>,
-                response: Response<WeatherModel>
-            ) {
-                responseLiveData.value =  response.body() as WeatherModel
-            }
-
-            override fun onFailure(call: Call<WeatherModel>, t: Throwable) {
-                throw t
-            }
-        })
-        return responseLiveData
+    suspend fun  getWeatherByLocation(location:String): WeatherModel? {
+        return weatherApi.getCurrentWeatherData(location).body()
     }
 }

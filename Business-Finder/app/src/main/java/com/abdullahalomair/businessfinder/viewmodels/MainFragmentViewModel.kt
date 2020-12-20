@@ -1,8 +1,11 @@
 package com.abdullahalomair.businessfinder.viewmodels
 
+import android.content.Context
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
+import android.widget.Toast
+import androidx.annotation.RawRes
 import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.databinding.BaseObservable
 import androidx.lifecycle.LiveData
@@ -12,21 +15,32 @@ import com.abdullahalomair.businessfinder.R
 import com.abdullahalomair.businessfinder.controllers.BusinessRepository
 import com.abdullahalomair.businessfinder.controllers.CategoryAdapter
 import com.abdullahalomair.businessfinder.controllers.MainActivity
+import com.abdullahalomair.businessfinder.controllers.MainFragment
+import com.abdullahalomair.businessfinder.model.wathermodel.WeatherModel
+import com.abdullahalomair.businessfinder.model.yelpmodel.BusinessDetails
+import com.abdullahalomair.businessfinder.model.yelpmodel.Businesses
 import com.abdullahalomair.businessfinder.model.yelpmodel.BusinessesList
 import com.abdullahalomair.businessfinder.model.yelpmodel.Categories
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
+import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.core.Scheduler
 import io.reactivex.rxjava3.schedulers.Schedulers
 import kotlinx.coroutines.*
 
 
-class MainFragmentViewModel(private val activity: MainActivity): BaseObservable() {
+class MainFragmentViewModel(private val context: Context): BaseObservable() {
 
     private val repository = BusinessRepository.get()
       fun getBusinessList(location:String): LiveData<BusinessesList> {
         return repository.getBusinessList(location)
     }
 
+      suspend fun getBusinessDetail(businessId:String): BusinessDetails? {
+        return repository.getBusinessDetail(businessId)
+    }
+     suspend fun getWeatherDetail(location: String): WeatherModel? {
+        return repository.getWeatherData(location)
+    }
 
 
 
@@ -54,9 +68,9 @@ class MainFragmentViewModel(private val activity: MainActivity): BaseObservable(
     }
 
 
-    private suspend  fun finalFilteringResult(catPair: List<Pair<String,Int>>, cat: List<Categories>): MutableList<Pair<String, Int>> {
+    private   fun finalFilteringResult(catPair: List<Pair<String,Int>>, cat: List<Categories>): MutableList<Pair<String, Int>> {
         val finalResult: MutableList<Pair<String,Int>> = mutableListOf()
-        val text:String = activity.getString(R.string.all_categories)
+        val text:String = context.getString(R.string.all_categories)
         finalResult.add(text to catPair.size)
         cat.forEach { categories ->
             catPair.forEach {  pair ->
@@ -67,7 +81,7 @@ class MainFragmentViewModel(private val activity: MainActivity): BaseObservable(
         }
         return finalResult
     }
-    private suspend fun getCategoriesPair(data: BusinessesList): List<Pair<String,Int>> {
+    private  fun getCategoriesPair(data: BusinessesList): List<Pair<String,Int>> {
 
         val categoryQuantity: MutableList<Pair<String, Int>> = mutableListOf()
         val categories = mutableSetOf<String>()
@@ -89,7 +103,7 @@ class MainFragmentViewModel(private val activity: MainActivity): BaseObservable(
         }
         return categoryQuantity.toList()
     }
-    private suspend  fun getListOfCategories(data: BusinessesList): List<Categories>{
+    private   fun getListOfCategories(data: BusinessesList): List<Categories>{
 
         val categories: MutableList<Categories> = mutableListOf()
         data.businesses.forEach { data ->

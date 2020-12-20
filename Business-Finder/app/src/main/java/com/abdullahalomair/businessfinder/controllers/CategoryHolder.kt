@@ -3,19 +3,23 @@ package com.abdullahalomair.businessfinder.controllers
 
 import android.content.Context
 import androidx.recyclerview.widget.RecyclerView
+import androidx.room.PrimaryKey
 import com.abdullahalomair.businessfinder.databinding.CategoryRecylerviewMainBinding
-import com.abdullahalomair.businessfinder.viewmodels.CategoryRecyclerViewMain
+import com.abdullahalomair.businessfinder.viewmodels.MainFragmentViewModel
 
-class CategoryHolder(private val context: Context,
-    private val binding: CategoryRecylerviewMainBinding)
+
+class CategoryHolder(
+    private val binding: CategoryRecylerviewMainBinding,
+    private val updateView: (category:String) -> Unit
+    )
     : RecyclerView.ViewHolder(binding.root) {
-        init {
-            binding.viewModel = CategoryRecyclerViewMain(context)
-        }
         fun bind(name: String, quantity:Int){
             binding.apply {
-                    viewModel!!.categorySize = quantity
-                    viewModel!!.categoryName = name
+                    categoryName.text = "$name ($quantity)"
+
+            }
+            itemView.setOnClickListener {
+                updateView(name)
             }
             
         }

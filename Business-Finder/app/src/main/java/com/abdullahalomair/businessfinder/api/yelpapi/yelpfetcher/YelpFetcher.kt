@@ -24,24 +24,8 @@ class YelpFetcher {
 
     }
 
-    fun getBusinessDetails(businessID:String):LiveData<BusinessDetails>{
-        val mutableLiveData: MutableLiveData<BusinessDetails> = MutableLiveData()
-        val call: Call<BusinessDetails> = yelpApi.getBusinessesDetails(businessID)
-
-        call.enqueue(object : Callback<BusinessDetails>{
-            override fun onResponse(
-                call: Call<BusinessDetails>,
-                response: Response<BusinessDetails>
-            ) {
-                mutableLiveData.value = response.body()
-            }
-
-            override fun onFailure(call: Call<BusinessDetails>, t: Throwable) {
-                throw t
-            }
-
-        })
-        return mutableLiveData
+    suspend fun getBusinessDetails(businessID:String):BusinessDetails?{
+        return yelpApi.getBusinessesDetails(businessID).body()
     }
 
      fun  getBusinessesByLocation(location:String): LiveData<BusinessesList> {

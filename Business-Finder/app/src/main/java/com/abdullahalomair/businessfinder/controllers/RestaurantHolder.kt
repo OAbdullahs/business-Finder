@@ -1,23 +1,32 @@
 package com.abdullahalomair.businessfinder.controllers
 
 import android.content.Context
-import android.util.Log
+import android.widget.Toast
+import androidx.annotation.RawRes
 import androidx.recyclerview.widget.*
+import com.abdullahalomair.businessfinder.BR
 import com.abdullahalomair.businessfinder.R
 import com.abdullahalomair.businessfinder.databinding.TopRatingBusinessBinding
 import com.abdullahalomair.businessfinder.getWeatherAnimationName
+import com.abdullahalomair.businessfinder.model.wathermodel.WeatherModel
+import com.abdullahalomair.businessfinder.model.yelpmodel.BusinessDetails
 import com.abdullahalomair.businessfinder.model.yelpmodel.Businesses
-import com.abdullahalomair.businessfinder.viewmodels.TopRatingBusinesses
+import com.abdullahalomair.businessfinder.viewmodels.MainFragmentViewModel
 import com.bumptech.glide.Glide
+import kotlinx.coroutines.*
+import java.io.IOException
+import kotlin.reflect.KSuspendFunction1
 
 
-class RestaurantHolder(private val activity: MainActivity,
-                       private val context: Context,
-                       private val binding: TopRatingBusinessBinding)
+class RestaurantHolder(private val context: Context,
+                       private val binding: TopRatingBusinessBinding,
+                       private val getWeatherDetail: KSuspendFunction1<String, WeatherModel?>,
+                       private val getBusinessDetail: KSuspendFunction1<String, BusinessDetails?>
+                       )
     : RecyclerView.ViewHolder(binding.root) {
     private lateinit var imagesAdapter: ImagesAdapter
+    private val scope = CoroutineScope(Dispatchers.IO)
     init {
-        binding.viewModel = TopRatingBusinesses()
         binding.restaurantImagesRecyclerview.layoutManager =
             StaggeredGridLayoutManager(3,LinearLayoutManager.HORIZONTAL)
         val scrollHelper = LinearSnapHelper()
@@ -28,8 +37,17 @@ class RestaurantHolder(private val activity: MainActivity,
             Glide.with(itemView)
                 .load(allData.imageUrl)
                 .into(binding.restaurantMainImage)
-            displayPhotos(allData)
-            displayWeatherData("${allData.coordinates.latitude},${allData.coordinates.longitude}")
+            try {
+                displayPhotos(allData)
+            }catch (e:IOException){
+                Toast.makeText(context, e.localizedMessage, Toast.LENGTH_SHORT).show()
+            }
+            try {
+                displayWeatherData("${allData.coordinates.latitude},${allData.coordinates.longitude}")
+            }
+            catch (e:IOException){
+                Toast.makeText(context, e.localizedMessage, Toast.LENGTH_SHORT).show()
+            }
             val isBusinessClosed = if (allData.isClosed)
             {
                 context.getString(R.string.business_closed)
@@ -39,43 +57,49 @@ class RestaurantHolder(private val activity: MainActivity,
             }
 
             binding.apply {
-                viewModel?.businessName = allData.name
-                viewModel?.businessType = allData.categories.last().title
-                viewModel?.isBusinessOpen = isBusinessClosed
-                viewModel?.ratingBusiness = allData.rating.toFloat()
-            }
-        }
-        private fun displayWeatherData(location:String){
-            binding.viewModel?.getWeatherDetails(location)?.observeForever { data ->
-                binding.apply {
-                    val weatherStatus = getWeatherAnimationName(data.current.condition.code)
-                    viewModel?.weatherStatusAnimation = "@raw/w_sunny"
-                    viewModel?.weatherValue = data.current.tempC.toString()
-                }
+                businessName.text = allData.name
+                businessType.text = allData.categories.last().title
+                isOpenText.text = isBusinessClosed
+                ratingBar.rating = allData.rating.toFloat()
 
             }
         }
+        private  fun displayWeatherData(location:String) {
+           val isCompleted =  scope.launch {
+                val weather = getWeatherDetail(location)
+               withContext(Dispatchers.Main){
+                   if (weather != null){
+                       binding.apply {
+                           @RawRes val weatherStatus = getWeatherAnimationName(weather.current.condition.code)
+                           weatherAnimation.setAnimation(weatherStatus)
+                           weatherValue.text = weather.current.tempC.toString()
 
-        private fun displayPhotos(allData: Businesses){
-            try {
-                binding.viewModel?.getBusinessDetail(allData.id)?.observeForever { data ->
-                    binding.restaurantImagesRecyclerview.apply {
-                        imagesAdapter = ImagesAdapter(activity, context, data.photos)
-                        adapter = imagesAdapter
+                       }
+                   }
+               }
+               }.isCompleted
 
-                    }
-                }
-            }catch (e:NullPointerException){
-                try {
-                binding.viewModel?.getBusinessDetail(allData.id)?.observeForever { data ->
-                    binding.restaurantImagesRecyclerview.apply {
-                        imagesAdapter = ImagesAdapter(activity, context, data.photos)
-                        adapter = imagesAdapter
-
-                    }
-                }
-            }catch (e:NullPointerException){}
-
+            if (isCompleted){
+                scope.cancel()
             }
+        }
+
+        private fun displayPhotos(allData: Businesses) {
+           val isComplete =  scope.launch {
+               val images =  getBusinessDetail(allData.id)
+                withContext(Dispatchers.Main){
+                    if (images != null) {
+                        binding.restaurantImagesRecyclerview.apply {
+                            imagesAdapter = ImagesAdapter(context, images.photos)
+                            adapter = imagesAdapter
+                        }
+                    }
+                }
+            }.isCompleted
+            if (isComplete){
+                scope.cancel()
+            }
+
+
         }
 }

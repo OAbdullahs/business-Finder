@@ -14,10 +14,10 @@ class BusinessRepository private constructor(context: Context){
     fun getBusinessList(location:String):LiveData<BusinessesList>{
         return YelpFetcher().getBusinessesByLocation(location)
     }
-    fun getBusinessDetail(businessId: String): LiveData<BusinessDetails>{
+    suspend fun getBusinessDetail(businessId: String): BusinessDetails?{
         return YelpFetcher().getBusinessDetails(businessId)
     }
-    fun getWeatherData(location: String): LiveData<WeatherModel>{
+    suspend fun getWeatherData(location: String): WeatherModel?{
         return WeatherFetcher().getWeatherByLocation(location)
     }
 

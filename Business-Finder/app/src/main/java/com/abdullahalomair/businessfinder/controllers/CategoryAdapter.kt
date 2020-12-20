@@ -13,10 +13,9 @@ import kotlinx.coroutines.*
 
 class CategoryAdapter(private val context: Context,
                       private val data:List<Pair<String, Int>>,
+                      private val updateView: (category:String) -> Unit
                       )
     :RecyclerView.Adapter<CategoryHolder>() {
-
-    private val scope = CoroutineScope(Dispatchers.IO)
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CategoryHolder {
         val binding:CategoryRecylerviewMainBinding = DataBindingUtil.inflate(
@@ -25,7 +24,7 @@ class CategoryAdapter(private val context: Context,
             parent,
             false
         )
-        return CategoryHolder(context, binding)
+        return CategoryHolder(binding,updateView)
     }
 
     override fun onBindViewHolder(holder: CategoryHolder, position: Int) {
@@ -36,8 +35,5 @@ class CategoryAdapter(private val context: Context,
 
     override fun getItemCount(): Int = data.size
 
-    override fun onViewDetachedFromWindow(holder: CategoryHolder) {
-        super.onViewDetachedFromWindow(holder)
-        scope.cancel()
-    }
+
 }

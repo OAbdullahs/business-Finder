@@ -5,4 +5,7 @@
     <string name="all_categories">All</string>
     <string name="business_open">Open</string>
     <string name="business_closed">Closed</string>
+    <string name="business_unknown">Unknown</string>
+    <string name="today_text">TODAY</string>
+    <string name="google_maps_key">AIzaSyBgUfC5EcrmsQCbtUHkBBN_VB6XR6DPS6I</string>
 </resources>

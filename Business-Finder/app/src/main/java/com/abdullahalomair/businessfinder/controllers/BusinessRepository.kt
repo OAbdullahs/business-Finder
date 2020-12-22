@@ -5,6 +5,7 @@ import androidx.lifecycle.LiveData
 import com.abdullahalomair.businessfinder.api.weatherapi.weatherfetcher.WeatherFetcher
 import com.abdullahalomair.businessfinder.api.yelpapi.yelpfetcher.YelpFetcher
 import com.abdullahalomair.businessfinder.model.wathermodel.WeatherModel
+import com.abdullahalomair.businessfinder.model.wathermodel.forecats.WeatherForeCast
 import com.abdullahalomair.businessfinder.model.yelpmodel.BusinessDetails
 import com.abdullahalomair.businessfinder.model.yelpmodel.BusinessesList
 
@@ -19,6 +20,9 @@ class BusinessRepository private constructor(context: Context){
     }
     suspend fun getWeatherData(location: String): WeatherModel?{
         return WeatherFetcher().getWeatherByLocation(location)
+    }
+    fun getWeatherForecast(location: String): LiveData<WeatherForeCast> {
+        return WeatherFetcher().getWeatherForeCast(location)
     }
 
     companion object{

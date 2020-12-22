@@ -1,5 +1,10 @@
 package com.abdullahalomair.businessfinder
 
+
+const val BUSINESS = "BUSINESS"
+const val WEATHER_MODEL = "WEATHER_MODEL"
+const val BUSINESS_DETAILS = "BUSINESS_DETAILS"
+
 fun getWeatherAnimationName(weatherCode:Int):Int{
     return when(weatherCode){
         1000 -> R.raw.w_sunny
@@ -10,7 +15,7 @@ fun getWeatherAnimationName(weatherCode:Int):Int{
         1066, 1114,1117,1210,1213,1216,1219,1222,1225,1237,1255,1261,1264,1282 -> R.raw.w_snow
         1069, 1087,1204,1207, 1249,1252,1258,1273,1276 -> R.raw.w_thunder
         else ->{
-            0
+            R.raw.w_sunny
         }
     }
 }

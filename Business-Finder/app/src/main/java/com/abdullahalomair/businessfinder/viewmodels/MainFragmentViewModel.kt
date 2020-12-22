@@ -3,28 +3,14 @@ package com.abdullahalomair.businessfinder.viewmodels
 import android.content.Context
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Log
-import android.widget.Toast
-import androidx.annotation.RawRes
-import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.databinding.BaseObservable
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.ViewModel
-import androidx.recyclerview.widget.LinearLayoutManager
 import com.abdullahalomair.businessfinder.R
 import com.abdullahalomair.businessfinder.controllers.BusinessRepository
-import com.abdullahalomair.businessfinder.controllers.CategoryAdapter
-import com.abdullahalomair.businessfinder.controllers.MainActivity
-import com.abdullahalomair.businessfinder.controllers.MainFragment
 import com.abdullahalomair.businessfinder.model.wathermodel.WeatherModel
 import com.abdullahalomair.businessfinder.model.yelpmodel.BusinessDetails
-import com.abdullahalomair.businessfinder.model.yelpmodel.Businesses
 import com.abdullahalomair.businessfinder.model.yelpmodel.BusinessesList
 import com.abdullahalomair.businessfinder.model.yelpmodel.Categories
-import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
-import io.reactivex.rxjava3.core.Observable
-import io.reactivex.rxjava3.core.Scheduler
-import io.reactivex.rxjava3.schedulers.Schedulers
 import kotlinx.coroutines.*
 
 
@@ -35,12 +21,14 @@ class MainFragmentViewModel(private val context: Context): BaseObservable() {
         return repository.getBusinessList(location)
     }
 
-      suspend fun getBusinessDetail(businessId:String): BusinessDetails? {
-        return repository.getBusinessDetail(businessId)
+     suspend fun getWeatherDetail (location: String):WeatherModel {
+        return repository.getWeatherData(location) ?: WeatherModel()
     }
-     suspend fun getWeatherDetail(location: String): WeatherModel? {
-        return repository.getWeatherData(location)
+
+     suspend fun getBusinessesDetails (businessId:String): BusinessDetails {
+         return repository.getBusinessDetail(businessId) ?: BusinessDetails()
     }
+
 
 
 

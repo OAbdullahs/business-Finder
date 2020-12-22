@@ -12,6 +12,7 @@
         <!-- Status bar color. -->
         <item name="android:statusBarColor" tools:targetApi="l">?attr/colorPrimaryVariant</item>
         <!-- Customize your theme here. -->
+        <item name="fontFamily">@font/opensans_regular</item>
         <item name="android:textColor">@color/black</item>
         <item name="search_restaurants">@drawable/main_search_design_day</item>
         <item name="search_icon">@drawable/search_icon_day</item>

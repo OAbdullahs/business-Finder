@@ -1,5 +1,6 @@
 package com.abdullahalomair.businessfinder.api.yelpapi.yelpfetcher
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.abdullahalomair.businessfinder.api.yelpapi.YelpApi

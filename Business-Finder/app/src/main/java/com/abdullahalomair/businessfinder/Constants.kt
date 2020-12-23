@@ -4,6 +4,7 @@ package com.abdullahalomair.businessfinder
 const val BUSINESS = "BUSINESS"
 const val WEATHER_MODEL = "WEATHER_MODEL"
 const val BUSINESS_DETAILS = "BUSINESS_DETAILS"
+const val CITY_NAME = "CITY_NAME"
 
 fun getWeatherAnimationName(weatherCode:Int):Int{
     return when(weatherCode){

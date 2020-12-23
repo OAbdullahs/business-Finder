@@ -5,6 +5,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
 
+
     <androidx.constraintlayout.widget.ConstraintLayout
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -24,39 +25,29 @@
         card_view:layout_constraintEnd_toEndOf="parent"
         card_view:layout_constraintStart_toStartOf="parent"
         card_view:layout_constraintTop_toTopOf="parent">
+        <com.facebook.shimmer.ShimmerFrameLayout
+            android:id="@+id/business_shimmer_fragment"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-
-
-            <com.facebook.shimmer.ShimmerFrameLayout
-                android:id="@+id/business_name"
-                android:layout_width="wrap_content"
-                android:layout_height="20dp"
-                android:layout_marginStart="10dp"
-                android:layout_marginTop="10dp"
-                card_view:layout_constraintStart_toStartOf="parent"
-                card_view:layout_constraintTop_toBottomOf="@+id/images_recyclerview_fragment">
                 <TextView
                     android:id="@+id/business_name_text"
                     android:layout_height="match_parent"
                     android:layout_width="wrap_content"
                     android:minWidth="90dp"
                     android:background="@color/dark_gray"
-                    tools:text="Hi I am a restaurant" />
-            </com.facebook.shimmer.ShimmerFrameLayout>
+                    tools:text="Hi I am a restaurant"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginTop="10dp"
+                    card_view:layout_constraintStart_toStartOf="parent"
+                    card_view:layout_constraintTop_toBottomOf="@+id/images_recyclerview_fragment"/>
 
 
-            <com.facebook.shimmer.ShimmerFrameLayout
-                android:id="@+id/business_type"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="5dp"
-                card_view:layout_constraintStart_toStartOf="@+id/ratingBar"
-                card_view:layout_constraintTop_toBottomOf="@+id/ratingBar"
-                >
+
                 <TextView
                     android:id="@+id/business_type_text"
                     android:layout_width="wrap_content"
@@ -64,8 +55,10 @@
                     android:layout_height="wrap_content"
                     android:background="@color/dark_gray"
                     tools:text="restaurant"
+                    android:layout_marginTop="5dp"
+                    card_view:layout_constraintStart_toStartOf="@+id/ratingBar"
+                    card_view:layout_constraintTop_toBottomOf="@+id/ratingBar"
                     />
-            </com.facebook.shimmer.ShimmerFrameLayout>
 
 
             <RatingBar
@@ -77,18 +70,11 @@
                 android:numStars="5"
                 android:progressTint="@color/gold"
                 android:secondaryProgressTint="@color/gold"
-                card_view:layout_constraintStart_toStartOf="@+id/business_name"
-                card_view:layout_constraintTop_toBottomOf="@+id/business_name"
+                card_view:layout_constraintStart_toStartOf="@+id/business_name_text"
+                card_view:layout_constraintTop_toBottomOf="@+id/business_name_text"
                 tools:rating="3" />
 
 
-            <com.facebook.shimmer.ShimmerFrameLayout
-                android:id="@+id/is_business_open"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                card_view:layout_constraintBottom_toBottomOf="parent"
-                card_view:layout_constraintStart_toStartOf="@+id/business_type"
-                card_view:layout_constraintTop_toBottomOf="@+id/business_type">
                 <TextView
                     android:id="@+id/is_open_text"
                     android:layout_width="wrap_content"
@@ -97,8 +83,11 @@
                     android:layout_marginTop="5dp"
                     android:background="@color/dark_gray"
                     android:layout_marginBottom="5dp"
+                    card_view:layout_constraintBottom_toBottomOf="parent"
+                    card_view:layout_constraintStart_toStartOf="@+id/business_type_text"
+                    card_view:layout_constraintTop_toBottomOf="@+id/business_type_text"
                     tools:text="Open" />
-            </com.facebook.shimmer.ShimmerFrameLayout>
+
 
 
             <ImageView
@@ -107,6 +96,7 @@
                 android:layout_height="195dp"
                 android:layout_marginStart="10dp"
                 android:layout_marginTop="10dp"
+                android:background="@drawable/images_border"
                 android:scaleType="centerCrop"
                 card_view:layout_constraintEnd_toStartOf="@+id/images_recyclerview_fragment"
                 card_view:layout_constraintStart_toStartOf="parent"
@@ -153,13 +143,6 @@
 
 
 
-
-                <androidx.constraintlayout.widget.ConstraintLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent">
-
-                </androidx.constraintlayout.widget.ConstraintLayout>
-
             <ImageView
                 android:id="@+id/weather_image"
                 android:layout_width="55dp"
@@ -180,6 +163,7 @@
                 android:textAlignment="textStart"
                 android:minWidth="50dp"
                 android:textSize="19sp"
+                android:background="@color/dark_gray"
                 card_view:layout_constraintBottom_toBottomOf="@+id/weather_image"
                 card_view:layout_constraintEnd_toEndOf="parent"
                 card_view:layout_constraintTop_toTopOf="@+id/weather_image"
@@ -187,8 +171,10 @@
 
 
         </androidx.constraintlayout.widget.ConstraintLayout>
+        </com.facebook.shimmer.ShimmerFrameLayout>
 
     </androidx.cardview.widget.CardView>
 </androidx.constraintlayout.widget.ConstraintLayout>
+
 
 </layout>

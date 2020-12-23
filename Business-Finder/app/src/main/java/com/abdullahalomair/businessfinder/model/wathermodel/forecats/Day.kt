@@ -1,10 +1,12 @@
 package com.abdullahalomair.businessfinder.model.wathermodel.forecats
 
+import android.os.Parcelable
 import com.abdullahalomair.businessfinder.model.wathermodel.Condition
 import com.google.gson.annotations.SerializedName
+import kotlinx.android.parcel.Parcelize
 
 
-
+@Parcelize
 data class Day (
 
     @SerializedName("maxtemp_c") val maxTemp_c : Double = 0.0,
@@ -23,4 +25,4 @@ data class Day (
     @SerializedName("daily_chance_of_snow") val daily_chance_of_snow : Int = 0,
     @SerializedName("condition") val condition : Condition= Condition(),
     @SerializedName("uv") val uv : Int = 0
-)
+): Parcelable

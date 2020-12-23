@@ -5,7 +5,7 @@ import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.abdullahalomair.businessfinder.R
-import com.abdullahalomair.businessfinder.databinding.AllBusinessBinding
+import com.abdullahalomair.businessfinder.databinding.BusinessRecyclerviewBinding
 import com.abdullahalomair.businessfinder.model.wathermodel.WeatherModel
 import com.abdullahalomair.businessfinder.model.yelpmodel.BusinessDetails
 import com.abdullahalomair.businessfinder.model.yelpmodel.Businesses
@@ -20,9 +20,9 @@ class RestaurantAdapter(private val businesses: List<Businesses>,
     private val scope = CoroutineScope(Dispatchers.Default)
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RestaurantHolder {
-        val binding: AllBusinessBinding = DataBindingUtil.inflate(
+        val binding: BusinessRecyclerviewBinding = DataBindingUtil.inflate(
                 LayoutInflater.from(parent.context),
-                R.layout.all_business,
+                R.layout.business_recyclerview,
                 parent,
                 false
         )

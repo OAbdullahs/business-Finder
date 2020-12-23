@@ -149,6 +149,7 @@
                     android:layout_marginStart="5dp"
                     android:layout_marginTop="10dp"
                     android:layout_marginEnd="5dp"
+                    android:background="@{viewModel.textViewBackgroundColor}"
                     android:fontFamily="@font/opensans_extrabolditalic"
                     android:gravity="center"
                     android:text="@{viewModel.businessCityName}"
@@ -163,6 +164,8 @@
                     android:id="@+id/textView"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
+                    android:minHeight="2dp"
+                    android:background="@{viewModel.textViewBackgroundColor}"
                     android:fontFamily="@font/opensans_light"
                     android:gravity="center"
                     android:text="@{viewModel.businessCountyName}"
@@ -201,12 +204,14 @@
                         app:layout_constraintStart_toEndOf="@+id/animated_image"
                         app:layout_constraintTop_toTopOf="@+id/animated_image" />
 
-                    <com.google.android.material.textview.MaterialTextView
+                    <TextView
                         android:id="@+id/materialTextView"
                         android:layout_width="wrap_content"
+                        android:minWidth="20dp"
                         android:layout_height="100dp"
                         android:layout_marginStart="2dp"
                         android:gravity="center"
+                        android:background="@{viewModel.textViewBackgroundColor}"
                         android:text="@{viewModel.currentWeather}"
                         android:textSize="45sp"
                         android:textStyle="bold"
@@ -222,6 +227,7 @@
                         android:layout_height="wrap_content"
                         android:gravity="center"
                         android:text="@string/today_text"
+                        android:background="@{viewModel.textViewBackgroundColor}"
                         app:layout_constraintBottom_toBottomOf="@+id/materialTextView"
                         app:layout_constraintStart_toEndOf="@+id/materialTextView"
                         app:layout_constraintTop_toTopOf="@+id/materialTextView"
@@ -230,6 +236,8 @@
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:minHeight="2dp"
+                        android:background="@{viewModel.textViewBackgroundColor}"
                         android:text="@{viewModel.averageWeather}"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toEndOf="@+id/materialTextView"
@@ -250,9 +258,11 @@
                     app:layout_constraintStart_toStartOf="parent">
 
                     <androidx.cardview.widget.CardView
+                        android:id="@+id/current_day_cardView"
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
                         android:layout_margin="5dp"
+                        android:onClick="@{() ->viewModel.goToCurrentWeatherDetail()}"
                         android:layout_weight="1">
 
                         <androidx.constraintlayout.widget.ConstraintLayout
@@ -266,6 +276,7 @@
                                 android:gravity="center"
                                 android:text="@{viewModel.currentDate}"
                                 android:textStyle="bold"
+                                android:background="@{viewModel.textViewBackgroundColor}"
                                 app:layout_constraintEnd_toEndOf="parent"
                                 app:layout_constraintStart_toStartOf="parent"
                                 app:layout_constraintTop_toTopOf="parent">
@@ -299,6 +310,7 @@
                                 android:layout_width="50dp"
                                 android:layout_height="0dp"
                                 android:gravity="center"
+                                android:background="@{viewModel.textViewBackgroundColor}"
                                 android:text="@{viewModel.currentWeather}"
                                 app:layout_constraintBottom_toBottomOf="@+id/lottieAnimationView0"
                                 app:layout_constraintStart_toEndOf="@+id/lottieAnimationView0"
@@ -309,6 +321,7 @@
                                 android:layout_height="wrap_content"
                                 android:layout_marginEnd="5dp"
                                 android:layout_marginBottom="5dp"
+                                android:background="@{viewModel.textViewBackgroundColor}"
                                 android:text="@{viewModel.averageWeather}"
                                 app:layout_constraintBottom_toBottomOf="parent"
                                 app:layout_constraintEnd_toEndOf="parent"
@@ -320,9 +333,11 @@
                     </androidx.cardview.widget.CardView>
 
                     <androidx.cardview.widget.CardView
+                        android:id="@+id/second_day_cardView"
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
                         android:layout_margin="5dp"
+                        android:onClick="@{() ->viewModel.goToSecondWeatherDetail()}"
                         android:layout_weight="1">
 
                         <androidx.constraintlayout.widget.ConstraintLayout
@@ -334,6 +349,7 @@
                                 android:layout_height="wrap_content"
                                 android:layout_margin="5dp"
                                 android:gravity="center"
+                                android:background="@{viewModel.textViewBackgroundColor}"
                                 android:text="@{viewModel.secondDayDate}"
                                 android:textStyle="bold"
                                 app:layout_constraintEnd_toEndOf="parent"
@@ -369,6 +385,7 @@
                                 android:layout_width="50dp"
                                 android:layout_height="0dp"
                                 android:gravity="center"
+                                android:background="@{viewModel.textViewBackgroundColor}"
                                 android:text="@{viewModel.secondDayWeatherDegree}"
                                 app:layout_constraintBottom_toBottomOf="@+id/lottieAnimationView1"
                                 app:layout_constraintStart_toEndOf="@+id/lottieAnimationView1"
@@ -379,6 +396,7 @@
                                 android:layout_height="wrap_content"
                                 android:layout_marginEnd="5dp"
                                 android:layout_marginBottom="5dp"
+                                android:background="@{viewModel.textViewBackgroundColor}"
                                 android:text="@{viewModel.secondDayWeatherAvg}"
                                 app:layout_constraintBottom_toBottomOf="parent"
                                 app:layout_constraintEnd_toEndOf="parent"
@@ -390,7 +408,9 @@
                     </androidx.cardview.widget.CardView>
 
                     <androidx.cardview.widget.CardView
+                        android:id="@+id/third_day_cardView"
                         android:layout_width="0dp"
+                        android:onClick="@{() ->viewModel.goToThirdWeatherDetail()}"
                         android:layout_height="match_parent"
                         android:layout_margin="5dp"
                         android:layout_weight="1">
@@ -404,6 +424,7 @@
                                 android:layout_height="wrap_content"
                                 android:layout_margin="5dp"
                                 android:gravity="center"
+                                android:background="@{viewModel.textViewBackgroundColor}"
                                 android:text="@{viewModel.thirdDayDate}"
                                 android:textStyle="bold"
                                 app:layout_constraintEnd_toEndOf="parent"
@@ -439,6 +460,7 @@
                                 android:layout_width="50dp"
                                 android:layout_height="0dp"
                                 android:gravity="center"
+                                android:background="@{viewModel.textViewBackgroundColor}"
                                 android:text="@{viewModel.thirdDayWeatherDegree}"
                                 app:layout_constraintBottom_toBottomOf="@+id/lottieAnimationView"
                                 app:layout_constraintStart_toEndOf="@+id/lottieAnimationView"
@@ -449,6 +471,7 @@
                                 android:layout_height="wrap_content"
                                 android:layout_marginEnd="5dp"
                                 android:layout_marginBottom="5dp"
+                                android:background="@{viewModel.textViewBackgroundColor}"
                                 android:text="@{viewModel.thirdDayWeatherAvg}"
                                 app:layout_constraintBottom_toBottomOf="parent"
                                 app:layout_constraintEnd_toEndOf="parent"

@@ -7,10 +7,13 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.annotation.RawRes
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import com.abdullahalomair.businessfinder.*
+import com.abdullahalomair.businessfinder.callbacks.CallBacks
 import com.abdullahalomair.businessfinder.databinding.BusinessDetailsBinding
+import com.abdullahalomair.businessfinder.model.navigator.Navigator
 import com.abdullahalomair.businessfinder.model.wathermodel.WeatherModel
 import com.abdullahalomair.businessfinder.model.yelpmodel.BusinessDetails
 import com.abdullahalomair.businessfinder.model.yelpmodel.Businesses
@@ -37,13 +40,15 @@ private const val C_DEGREE    = "℃"
 class BusinessDetailFragment : Fragment(), OnMapReadyCallback {
     private lateinit var binding: BusinessDetailsBinding
     private val scope = CoroutineScope(Dispatchers.IO)
+    private var callBacks: CallBacks? = null
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+        callBacks = requireContext() as CallBacks
         binding = DataBindingUtil.inflate(inflater, R.layout.business_details, container, false)
-        binding.viewModel = BusinessDetailViewModel()
+        binding.viewModel = BusinessDetailViewModel(requireContext())
         return binding.root
     }
 
@@ -53,66 +58,76 @@ class BusinessDetailFragment : Fragment(), OnMapReadyCallback {
         val businessDetails: BusinessDetails? = arguments?.getParcelable(BUSINESS_DETAILS)
         initMapView(savedInstanceState)
         if (businessDetails != null && businessData != null) {
-            if (businessDetails == BusinessDetails()){
-                scope.launch {
-                    val fetchedBusinessDetails = getBusinessDetails(businessData.id)
+            initSetTexts(businessData,businessDetails)
 
-                    withContext(Dispatchers.Main){
-                        if (fetchedBusinessDetails != null) {
-                            initSetTexts(businessData, fetchedBusinessDetails)
-                        }
-                    }
+        }
+    }
+    private fun initSetTexts(businessData: Businesses, businessDetails: BusinessDetails){
+        try {
+            initSetTextsFinal(businessData, businessDetails)
+        }catch (e:NoSuchElementException){
+            scope.launch {
+                val businessDetail = binding.viewModel?.getBusinessDetails(businessData.id)
+                withContext(Dispatchers.Main){
+                    if (businessDetail != null) initSetTextsFinal(businessData, businessDetail)
                 }
             }
-            initSetTexts(businessData,businessDetails)
         }
     }
 
-    private fun initSetTexts(businessData: Businesses,businessDetails: BusinessDetails) {
-            binding.apply {
-                scope.launch {
-                    val getImageDrawable = Glide
-                        .with(this@BusinessDetailFragment)
-                        .asDrawable()
-                        .load(businessData.imageUrl)
-                        .submit()
-                        .get()
+    private fun initSetTextsFinal(businessData: Businesses, businessDetails: BusinessDetails) {
+        binding.apply {
+            scope.launch {
+                val getImageDrawable = Glide
+                    .with(this@BusinessDetailFragment)
+                    .asDrawable()
+                    .load(businessData.imageUrl)
+                    .submit()
+                    .get()
 
-                    withContext(Dispatchers.Main) {
-                        val latAndLng = "${businessData.coordinates.latitude},${businessData.coordinates.longitude}"
+                withContext(Dispatchers.Main) {
+                    val latAndLng =
+                        "${businessData.coordinates.latitude},${businessData.coordinates.longitude}"
 
-                        initWeatherForeCast(latAndLng)
-                        viewModel?.imageDrawable = getImageDrawable
-                        viewModel?.businessTitle = businessData.name
-                        viewModel?.businessAlias = businessData.categories.last().title
-                        viewModel?.businessRatings = businessData.rating.toFloat()
-                        viewModel?.isBusinessOpen = setOpenText(businessDetails.hours.last().isOpenNow)
-                        viewModel?.priceTag = ". ${businessData.price}"
+                    initWeatherForeCast(latAndLng)
+                    viewModel?.imageDrawable = getImageDrawable
+                    viewModel?.businessTitle = businessData.name
+                    viewModel?.businessAlias = businessData.categories.last().title
+                    viewModel?.businessRatings = businessData.rating.toFloat()
+                    viewModel?.isBusinessOpen = setOpenText(businessDetails.hours.last().isOpenNow)
+                    viewModel?.priceTag = ". ${businessData.price}"
 
-                    }
                 }
-
             }
+
+        }
     }
-    private fun setOpenText(isOpen:Boolean): String
-     = when( isOpen){
-         true -> requireContext().getText(R.string.business_open).toString()
+
+    private fun setOpenText(isOpen: Boolean): String = when (isOpen) {
+        true -> requireContext().getText(R.string.business_open).toString()
         else -> requireContext().getText(R.string.business_closed).toString()
     }
-    private fun initWeatherForeCast(location:String){
+
+
+
+    private fun initWeatherForeCast(location: String) {
         binding?.viewModel?.getWeatherForecast(location)?.observe(
-            viewLifecycleOwner,{weatherForeCast ->
+            viewLifecycleOwner, { weatherForeCast ->
                 binding.weatherShimmerFragment.hideShimmer()
                 binding.apply {
+                    viewModel?.weatherForeCastModel = weatherForeCast.forecast.foreCastDay
+                    viewModel?.cityName =  weatherForeCast.location.name
                     //Current Weather Data
                     viewModel?.businessCityName = weatherForeCast.location.name
                     viewModel?.businessCountyName = weatherForeCast.location.country
                     viewModel?.currentWeather = "${weatherForeCast.current.tempC}$C_DEGREE"
-                    val weatherIconRawRes = getWeatherAnimationName(weatherForeCast.current.condition.code)
+                    val weatherIconRawRes =
+                        getWeatherAnimationName(weatherForeCast.current.condition.code)
                     viewModel?.currentWeatherIcon = weatherIconRawRes
                     val maxDegree = weatherForeCast.forecast.foreCastDay[0].day.maxTemp_c
                     val minDegree = weatherForeCast.forecast.foreCastDay[0].day.minTemp_c
-                    val finalTextAvg = "$maxDegree$C_DEGREE $UPPER_ARROW $minDegree$C_DEGREE $DOWN_ARROW"
+                    val finalTextAvg =
+                        "$maxDegree$C_DEGREE $UPPER_ARROW $minDegree$C_DEGREE $DOWN_ARROW"
                     viewModel?.averageWeather = finalTextAvg
                     viewModel?.currentDate = weatherForeCast.forecast.foreCastDay[0].date
                     //Second Day Weather Data
@@ -122,7 +137,7 @@ class BusinessDetailFragment : Fragment(), OnMapReadyCallback {
                         "${weatherForeCast.forecast.foreCastDay[1].day.avgTemp_c}$C_DEGREE"
                     val secondDayMaxAndMinDegrees =
                         "${weatherForeCast.forecast.foreCastDay[1].day.maxTemp_c}$C_DEGREE$UPPER_ARROW " +
-                        "${weatherForeCast.forecast.foreCastDay[1].day.minTemp_c}$C_DEGREE$DOWN_ARROW"
+                                "${weatherForeCast.forecast.foreCastDay[1].day.minTemp_c}$C_DEGREE$DOWN_ARROW"
                     viewModel?.secondDayWeatherIcon = secondWeatherIconRawRes
                     viewModel?.secondDayWeatherDegree = secondDayTemp
                     viewModel?.secondDayWeatherAvg = secondDayMaxAndMinDegrees
@@ -135,12 +150,11 @@ class BusinessDetailFragment : Fragment(), OnMapReadyCallback {
                         "${weatherForeCast.forecast.foreCastDay[2].day.avgTemp_c}$C_DEGREE"
                     val thirdDayMaxAndMinDegrees =
                         "${weatherForeCast.forecast.foreCastDay[2].day.maxTemp_c}$C_DEGREE$UPPER_ARROW " +
-                        "${weatherForeCast.forecast.foreCastDay[2].day.minTemp_c}$C_DEGREE$DOWN_ARROW"
+                                "${weatherForeCast.forecast.foreCastDay[2].day.minTemp_c}$C_DEGREE$DOWN_ARROW"
                     viewModel?.thirdDayWeatherIcon = thirdWeatherIconRawRes
                     viewModel?.thirdDayWeatherDegree = thirdDayTemp
                     viewModel?.thirdDayWeatherAvg = thirdDayMaxAndMinDegrees
                     viewModel?.thirdDayDate = weatherForeCast.forecast.foreCastDay[2].date
-
 
 
                 }
@@ -149,6 +163,7 @@ class BusinessDetailFragment : Fragment(), OnMapReadyCallback {
         )
     }
 
+
     private fun initMapView(savedInstanceState: Bundle?) {
         binding.googleMapView.apply {
             onCreate(savedInstanceState)
@@ -156,22 +171,23 @@ class BusinessDetailFragment : Fragment(), OnMapReadyCallback {
         }
     }
 
-    private suspend fun getBusinessDetails(businessId:String):BusinessDetails?{
+    private suspend fun getBusinessDetails(businessId: String): BusinessDetails? {
         return binding?.viewModel?.getBusinessDetails(businessId)
     }
 
     override fun onMapReady(googleMap: GoogleMap?) {
         if (googleMap != null) {
             val businessData: Businesses? = arguments?.getParcelable(BUSINESS)
-            if (businessData != null){
-                val latLng = LatLng(businessData.coordinates.latitude,businessData.coordinates.longitude)
+            if (businessData != null) {
+                val latLng =
+                    LatLng(businessData.coordinates.latitude, businessData.coordinates.longitude)
                 googleMap.addMarker(
                     MarkerOptions()
                         .title(businessData.name)
                         .position(latLng)
                 )
                 googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 10f))
-            }else{
+            } else {
                 val latLng = LatLng(24.7136, 46.6753)
                 googleMap.addMarker(
                     MarkerOptions()
@@ -188,10 +204,6 @@ class BusinessDetailFragment : Fragment(), OnMapReadyCallback {
     override fun onResume() {
         super.onResume()
         binding.googleMapView.onResume()
-        binding.animatedImage.apply {
-            repeatMode = LottieDrawable.INFINITE
-            playAnimation()
-        }
     }
 
     override fun onLowMemory() {
@@ -205,7 +217,10 @@ class BusinessDetailFragment : Fragment(), OnMapReadyCallback {
     }
 
     companion object {
-        fun newInstance(business: Businesses,businessDetails: BusinessDetails): BusinessDetailFragment {
+        fun newInstance(
+            business: Businesses,
+            businessDetails: BusinessDetails
+        ): BusinessDetailFragment {
             val args = Bundle()
             args.apply {
                 putParcelable(BUSINESS, business)

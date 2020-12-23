@@ -1,0 +1,510 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+    <data>
+        <variable
+            name="viewModel"
+            type="com.abdullahalomair.businessfinder.viewmodels.BusinessDetailViewModel" />
+    </data>
+
+<ScrollView
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fillViewport="true">
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/business_materialCardView"
+            android:layout_width="0dp"
+            android:layout_height="350dp"
+            android:layout_marginStart="5dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginEnd="5dp"
+            app:cardCornerRadius="10dp"
+            app:cardElevation="20dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <ImageView
+                    android:id="@+id/business_image_detail"
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:scaleType="centerCrop"
+                    app:load_image = "@{viewModel.imageDrawable}"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:srcCompat="@tools:sample/avatars" />
+
+                <View
+                    android:id="@+id/view4"
+                    android:layout_width="0dp"
+                    android:layout_height="110dp"
+                    android:background="@color/transparent_black"
+                    app:layout_constraintBottom_toBottomOf="@+id/business_image_detail"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent" />
+
+                <TextView
+                    android:id="@+id/business_title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="5dp"
+                    android:textStyle="bold"
+                    android:textSize="20sp"
+                    android:layout_marginTop="5dp"
+                    android:text="@{viewModel.businessTitle}"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="@+id/view4"
+                    tools:text="My business" />
+
+                <RatingBar
+                    android:id="@+id/business_ratings"
+                    style="?attr/ratingBarStyleSmall"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    android:numStars="5"
+                    android:rating="@{viewModel.businessRatings}"
+                    android:progressTint="@color/gold"
+                    android:secondaryProgressTint="@color/gold"
+                    app:layout_constraintStart_toStartOf="@+id/business_title"
+                    app:layout_constraintTop_toBottomOf="@+id/business_title" />
+
+                <TextView
+                    android:id="@+id/business_alias"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    android:textStyle="bold"
+                    android:text="@{viewModel.businessAlias}"
+                    app:layout_constraintStart_toStartOf="@+id/business_ratings"
+                    app:layout_constraintTop_toBottomOf="@+id/business_ratings"
+                    tools:text="Restaurant" />
+
+                <TextView
+                    android:id="@+id/is_business_open"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    android:layout_marginBottom="5dp"
+                    android:text="@{viewModel.isBusinessOpen}"
+                    android:textStyle="bold"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="@+id/business_alias"
+                    app:layout_constraintTop_toBottomOf="@+id/business_alias"
+                    app:layout_constraintVertical_bias="0.0"
+                    tools:text="Open" />
+
+                <TextView
+                    android:id="@+id/price_tag"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textStyle="bold"
+                    android:text="@{viewModel.priceTag}"
+                    app:layout_constraintStart_toEndOf="@+id/is_business_open"
+                    app:layout_constraintTop_toTopOf="@+id/is_business_open"
+                    tools:text=" . $$" />
+
+
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <com.google.android.material.card.MaterialCardView
+            android:layout_marginBottom="10dp"
+            android:id="@+id/weather_materialCardView"
+            android:layout_width="0dp"
+            android:layout_height="350dp"
+            android:layout_marginStart="5dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginEnd="5dp"
+            app:cardCornerRadius="10dp"
+            app:cardElevation="20dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/business_materialCardView">
+
+            <com.facebook.shimmer.ShimmerFrameLayout
+                android:id="@+id/weather_shimmer_fragment"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <TextView
+                    android:id="@+id/weather_city_name"
+                    android:layout_width="0dp"
+                    android:layout_height="50dp"
+                    android:layout_marginStart="5dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginEnd="5dp"
+                    android:fontFamily="@font/opensans_extrabolditalic"
+                    android:gravity="center"
+                    android:text="@{viewModel.businessCityName}"
+                    android:textSize="28sp"
+                    android:textStyle="bold"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:text="California" />
+
+                <TextView
+                    android:id="@+id/textView"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/opensans_light"
+                    android:gravity="center"
+                    android:text="@{viewModel.businessCountyName}"
+                    app:layout_constraintEnd_toEndOf="@+id/weather_city_name"
+                    app:layout_constraintStart_toStartOf="@+id/weather_city_name"
+                    app:layout_constraintTop_toBottomOf="@+id/weather_city_name"
+                    tools:text="USA" />
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/constraintLayout"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintBottom_toTopOf="@+id/linearLayout"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/textView">
+
+                    <com.airbnb.lottie.LottieAnimationView
+                        android:id="@+id/animated_image"
+                        android:layout_width="100dp"
+                        android:layout_height="100dp"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:lottie_autoPlay="true"
+                        app:lottie_loop="true"
+                        app:lottie_rawRes="@{viewModel.currentWeatherIcon}" />
+
+                    <View
+                        android:id="@+id/view6"
+                        android:layout_width="2dp"
+                        android:layout_height="80dp"
+                        android:layout_marginStart="2dp"
+                        android:background="?default_color"
+                        app:layout_constraintBottom_toBottomOf="@+id/animated_image"
+                        app:layout_constraintStart_toEndOf="@+id/animated_image"
+                        app:layout_constraintTop_toTopOf="@+id/animated_image" />
+
+                    <com.google.android.material.textview.MaterialTextView
+                        android:id="@+id/materialTextView"
+                        android:layout_width="wrap_content"
+                        android:layout_height="100dp"
+                        android:layout_marginStart="2dp"
+                        android:gravity="center"
+                        android:text="@{viewModel.currentWeather}"
+                        android:textSize="45sp"
+                        android:textStyle="bold"
+                        app:layout_constraintBottom_toBottomOf="@+id/animated_image"
+                        app:layout_constraintStart_toEndOf="@+id/view6"
+                        app:layout_constraintTop_toTopOf="@+id/animated_image"
+                        app:layout_constraintVertical_bias="0.0"
+                        tools:text="22" />
+
+                    <TextView
+                        android:id="@+id/textView2"
+                        android:layout_width="50dp"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:text="@string/today_text"
+                        app:layout_constraintBottom_toBottomOf="@+id/materialTextView"
+                        app:layout_constraintStart_toEndOf="@+id/materialTextView"
+                        app:layout_constraintTop_toTopOf="@+id/materialTextView"
+                        app:layout_constraintVertical_bias="0.56" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@{viewModel.averageWeather}"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toEndOf="@+id/materialTextView"
+                        app:layout_constraintTop_toBottomOf="@+id/textView2"
+                        tools:text="average" />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+                <LinearLayout
+                    android:id="@+id/linearLayout"
+                    android:layout_width="0dp"
+                    android:layout_height="110dp"
+                    android:orientation="horizontal"
+                    android:weightSum="3"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent">
+
+                    <androidx.cardview.widget.CardView
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_margin="5dp"
+                        android:layout_weight="1">
+
+                        <androidx.constraintlayout.widget.ConstraintLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent">
+
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_margin="5dp"
+                                android:gravity="center"
+                                android:text="@{viewModel.currentDate}"
+                                android:textStyle="bold"
+                                app:layout_constraintEnd_toEndOf="parent"
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintTop_toTopOf="parent">
+
+                            </TextView>
+
+                            <com.airbnb.lottie.LottieAnimationView
+                                android:id="@+id/lottieAnimationView0"
+                                android:layout_width="48dp"
+                                android:layout_height="48dp"
+                                android:layout_marginStart="5dp"
+                                android:scaleType="fitCenter"
+                                app:layout_constraintBottom_toBottomOf="parent"
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintTop_toTopOf="parent"
+                                app:lottie_autoPlay="true"
+                                app:lottie_loop="true"
+                                app:lottie_rawRes="@{viewModel.currentWeatherIcon}"
+                                tools:src="@drawable/images_border" />
+
+                            <View
+                                android:id="@+id/view0"
+                                android:layout_width="2dp"
+                                android:layout_height="45dp"
+                                android:background="?default_color"
+                                app:layout_constraintBottom_toBottomOf="@+id/lottieAnimationView0"
+                                app:layout_constraintStart_toEndOf="@+id/lottieAnimationView0"
+                                app:layout_constraintTop_toTopOf="@+id/lottieAnimationView0" />
+
+                            <TextView
+                                android:layout_width="50dp"
+                                android:layout_height="0dp"
+                                android:gravity="center"
+                                android:text="@{viewModel.currentWeather}"
+                                app:layout_constraintBottom_toBottomOf="@+id/lottieAnimationView0"
+                                app:layout_constraintStart_toEndOf="@+id/lottieAnimationView0"
+                                app:layout_constraintTop_toTopOf="@+id/lottieAnimationView0" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginEnd="5dp"
+                                android:layout_marginBottom="5dp"
+                                android:text="@{viewModel.averageWeather}"
+                                app:layout_constraintBottom_toBottomOf="parent"
+                                app:layout_constraintEnd_toEndOf="parent"
+                                app:layout_constraintHorizontal_bias="1.0"
+                                app:layout_constraintStart_toStartOf="parent"
+                                tools:text="Hello" />
+                        </androidx.constraintlayout.widget.ConstraintLayout>
+
+                    </androidx.cardview.widget.CardView>
+
+                    <androidx.cardview.widget.CardView
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_margin="5dp"
+                        android:layout_weight="1">
+
+                        <androidx.constraintlayout.widget.ConstraintLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent">
+
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_margin="5dp"
+                                android:gravity="center"
+                                android:text="@{viewModel.secondDayDate}"
+                                android:textStyle="bold"
+                                app:layout_constraintEnd_toEndOf="parent"
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintTop_toTopOf="parent">
+
+                            </TextView>
+
+                            <com.airbnb.lottie.LottieAnimationView
+                                android:id="@+id/lottieAnimationView1"
+                                android:layout_width="48dp"
+                                android:layout_height="48dp"
+                                android:layout_marginStart="5dp"
+                                android:scaleType="fitCenter"
+                                app:layout_constraintBottom_toBottomOf="parent"
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintTop_toTopOf="parent"
+                                app:lottie_autoPlay="true"
+                                app:lottie_loop="true"
+                                app:lottie_rawRes="@{viewModel.secondDayWeatherIcon}"
+                                tools:src="@drawable/images_border" />
+
+                            <View
+                                android:id="@+id/view1"
+                                android:layout_width="2dp"
+                                android:layout_height="45dp"
+                                android:background="?default_color"
+                                app:layout_constraintBottom_toBottomOf="@+id/lottieAnimationView1"
+                                app:layout_constraintStart_toEndOf="@+id/lottieAnimationView1"
+                                app:layout_constraintTop_toTopOf="@+id/lottieAnimationView1" />
+
+                            <TextView
+                                android:layout_width="50dp"
+                                android:layout_height="0dp"
+                                android:gravity="center"
+                                android:text="@{viewModel.secondDayWeatherDegree}"
+                                app:layout_constraintBottom_toBottomOf="@+id/lottieAnimationView1"
+                                app:layout_constraintStart_toEndOf="@+id/lottieAnimationView1"
+                                app:layout_constraintTop_toTopOf="@+id/lottieAnimationView1" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginEnd="5dp"
+                                android:layout_marginBottom="5dp"
+                                android:text="@{viewModel.secondDayWeatherAvg}"
+                                app:layout_constraintBottom_toBottomOf="parent"
+                                app:layout_constraintEnd_toEndOf="parent"
+                                app:layout_constraintHorizontal_bias="1.0"
+                                app:layout_constraintStart_toStartOf="parent"
+                                tools:text="Hello" />
+                        </androidx.constraintlayout.widget.ConstraintLayout>
+
+                    </androidx.cardview.widget.CardView>
+
+                    <androidx.cardview.widget.CardView
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_margin="5dp"
+                        android:layout_weight="1">
+
+                        <androidx.constraintlayout.widget.ConstraintLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent">
+
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_margin="5dp"
+                                android:gravity="center"
+                                android:text="@{viewModel.thirdDayDate}"
+                                android:textStyle="bold"
+                                app:layout_constraintEnd_toEndOf="parent"
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintTop_toTopOf="parent">
+
+                            </TextView>
+
+                            <com.airbnb.lottie.LottieAnimationView
+                                android:id="@+id/lottieAnimationView"
+                                android:layout_width="48dp"
+                                android:layout_height="48dp"
+                                android:layout_marginStart="5dp"
+                                android:scaleType="centerCrop"
+                                app:layout_constraintBottom_toBottomOf="parent"
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintTop_toTopOf="parent"
+                                app:lottie_autoPlay="true"
+                                app:lottie_loop="true"
+                                app:lottie_rawRes="@{viewModel.thirdDayWeatherIcon}"
+                                tools:src="@drawable/images_border" />
+
+                            <View
+                                android:id="@+id/view"
+                                android:layout_width="2dp"
+                                android:layout_height="45dp"
+                                android:background="?default_color"
+                                app:layout_constraintBottom_toBottomOf="@+id/lottieAnimationView"
+                                app:layout_constraintStart_toEndOf="@+id/lottieAnimationView"
+                                app:layout_constraintTop_toTopOf="@+id/lottieAnimationView" />
+
+                            <TextView
+                                android:layout_width="50dp"
+                                android:layout_height="0dp"
+                                android:gravity="center"
+                                android:text="@{viewModel.thirdDayWeatherDegree}"
+                                app:layout_constraintBottom_toBottomOf="@+id/lottieAnimationView"
+                                app:layout_constraintStart_toEndOf="@+id/lottieAnimationView"
+                                app:layout_constraintTop_toTopOf="@+id/lottieAnimationView" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginEnd="5dp"
+                                android:layout_marginBottom="5dp"
+                                android:text="@{viewModel.thirdDayWeatherAvg}"
+                                app:layout_constraintBottom_toBottomOf="parent"
+                                app:layout_constraintEnd_toEndOf="parent"
+                                app:layout_constraintHorizontal_bias="1.0"
+                                app:layout_constraintStart_toStartOf="parent"
+                                tools:text="Hello" />
+                        </androidx.constraintlayout.widget.ConstraintLayout>
+
+                    </androidx.cardview.widget.CardView>
+
+                </LinearLayout>
+
+
+
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+            </com.facebook.shimmer.ShimmerFrameLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <com.google.android.material.card.MaterialCardView
+            android:layout_marginBottom="10dp"
+            android:id="@+id/google_map_materialCardView"
+            android:layout_width="0dp"
+            android:layout_height="350dp"
+            android:layout_marginStart="5dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginEnd="5dp"
+            app:cardCornerRadius="10dp"
+            app:cardElevation="20dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/weather_materialCardView">
+
+            <com.google.android.gms.maps.MapView
+                android:id="@+id/google_map_view"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"/>
+        </com.google.android.material.card.MaterialCardView>
+
+        <com.google.android.material.card.MaterialCardView
+            android:layout_marginBottom="10dp"
+            android:id="@+id/saving_materialCardView"
+            android:layout_width="0dp"
+            android:layout_height="350dp"
+            android:layout_marginStart="5dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginEnd="5dp"
+            app:cardCornerRadius="10dp"
+            app:cardElevation="20dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/google_map_materialCardView">
+
+
+        </com.google.android.material.card.MaterialCardView>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</ScrollView>
+</layout>

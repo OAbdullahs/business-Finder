@@ -1,9 +1,12 @@
 package com.abdullahalomair.businessfinder.api.weatherapi.weatherfetcher
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.abdullahalomair.businessfinder.api.weatherapi.WeatherApi
 import com.abdullahalomair.businessfinder.model.wathermodel.WeatherModel
+import com.abdullahalomair.businessfinder.model.wathermodel.forecats.WeatherForeCast
+import com.abdullahalomair.businessfinder.model.yelpmodel.BusinessesList
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -21,18 +24,22 @@ class WeatherFetcher {
 
     }
 
-    fun  getWeatherByLocation(location:String): LiveData<WeatherModel> {
-        val call: Call<WeatherModel> = weatherApi.getCurrentWeatherData(location)
-        val responseLiveData: MutableLiveData<WeatherModel> = MutableLiveData()
-        call.enqueue(object : Callback<WeatherModel> {
+    suspend fun  getWeatherByLocation(location:String): WeatherModel? {
+        return weatherApi.getCurrentWeatherData(location).body()
+    }
+    fun  getWeatherForeCast (location:String): LiveData<WeatherForeCast> {
+        val call: Call<WeatherForeCast> = weatherApi.getWeatherForecast(location)
+        val responseLiveData: MutableLiveData<WeatherForeCast> = MutableLiveData()
+        call.enqueue(object : Callback<WeatherForeCast>{
             override fun onResponse(
-                call: Call<WeatherModel>,
-                response: Response<WeatherModel>
+                call: Call<WeatherForeCast>,
+                response: Response<WeatherForeCast>
             ) {
-                responseLiveData.value =  response.body() as WeatherModel
+                responseLiveData.value =  response.body()
             }
 
-            override fun onFailure(call: Call<WeatherModel>, t: Throwable) {
+            override fun onFailure(call: Call<WeatherForeCast>, t: Throwable) {
+
                 throw t
             }
         })

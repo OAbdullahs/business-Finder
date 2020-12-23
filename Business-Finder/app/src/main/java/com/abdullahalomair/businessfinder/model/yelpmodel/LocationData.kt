@@ -5,6 +5,7 @@ import com.google.gson.annotations.SerializedName
 
 
 
+
 data class LocationData (
 	val address1 : String = "",
 	val address2 : String = "",

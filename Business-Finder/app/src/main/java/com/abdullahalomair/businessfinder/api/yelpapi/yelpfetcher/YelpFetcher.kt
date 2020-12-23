@@ -1,8 +1,10 @@
 package com.abdullahalomair.businessfinder.api.yelpapi.yelpfetcher
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.abdullahalomair.businessfinder.api.yelpapi.YelpApi
+import com.abdullahalomair.businessfinder.model.yelpmodel.BusinessDetails
 import com.abdullahalomair.businessfinder.model.yelpmodel.BusinessesList
 import retrofit2.Call
 import retrofit2.Callback
@@ -21,6 +23,10 @@ class YelpFetcher {
             .build()
         yelpApi = retrofit.create(YelpApi::class.java)
 
+    }
+
+    suspend fun getBusinessDetails(businessID:String):BusinessDetails?{
+        return yelpApi.getBusinessesDetails(businessID).body()
     }
 
      fun  getBusinessesByLocation(location:String): LiveData<BusinessesList> {

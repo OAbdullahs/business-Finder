@@ -1,11 +1,17 @@
 package com.abdullahalomair.businessfinder.model.wathermodel
 
 import android.os.Parcelable
+import androidx.room.Embedded
+import androidx.room.Entity
+import androidx.room.PrimaryKey
 import kotlinx.android.parcel.Parcelize
+import java.util.*
 
 
 @Parcelize
+@Entity
 data class WeatherModel (
-	val location : Location = Location(),
-	val current : Current = Current()
+	@PrimaryKey val business_id: UUID = UUID.randomUUID(),
+	@Embedded val location : Location = Location(),
+	@Embedded val current : Current = Current()
 ):Parcelable

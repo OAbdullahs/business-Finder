@@ -9,9 +9,8 @@ import java.util.*
 
 
 @Parcelize
-@Entity
+
 data class WeatherModel (
-	@PrimaryKey val business_id: UUID = UUID.randomUUID(),
-	@Embedded val location : Location = Location(),
-	@Embedded val current : Current = Current()
+	 val location : Location = Location(),
+	 val current : Current = Current()
 ):Parcelable

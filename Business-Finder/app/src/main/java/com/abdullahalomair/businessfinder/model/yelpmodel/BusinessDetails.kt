@@ -11,9 +11,7 @@ import java.util.*
 
 
 @Parcelize
-@Entity
 data class BusinessDetails (
-    @PrimaryKey val business_id: UUID = UUID.randomUUID(),
     val id : String = "",
     val alias : String = "",
     val name : String = "",
@@ -22,12 +20,11 @@ data class BusinessDetails (
     @SerializedName("is_closed") val isClosed : Boolean = false,
     @SerializedName("display_phone") val display_phone : String = "",
     @SerializedName("review_count") val reviewCount : Int = 0,
-    @Embedded val categories : List<Categories> = emptyList(),
+    val categories : List<Categories> = emptyList(),
     val rating : Float = 0.0f,
-    @Embedded val location : Location  = Location(""),
-    @Embedded val coordinates : Coordinates = Coordinates(),
+    val location : Location  = Location(""),
+    val coordinates : Coordinates = Coordinates(),
     val photos : List<String> = emptyList(),
     val price : String = "",
-    @Embedded val hours : List<Hours> = emptyList(),
-    val transactions : List<String> = emptyList()
+    val hours : List<Hours> = emptyList(),
 ):Parcelable

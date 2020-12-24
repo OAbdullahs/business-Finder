@@ -12,7 +12,7 @@ import kotlinx.android.parcel.Parcelize
 import java.util.*
 
 @Parcelize
-@Entity
+
 data class Businesses (
 	@PrimaryKey val business_id:UUID = UUID.randomUUID(),
 	val id : String = "",
@@ -21,9 +21,9 @@ data class Businesses (
 	@SerializedName("image_url") val imageUrl : String = "",
 	@SerializedName("is_closed") val isClosed : Boolean = false,
 	@SerializedName("review_count") val reviewCount : Int = 0,
-	@Embedded val categories : List<Categories> = emptyList(),
+	 val categories : List<Categories> = emptyList(),
 	val rating : Double = 0.0,
-	@Embedded val coordinates : Coordinates = Coordinates(0.0,0.0),
+	 val coordinates : Coordinates = Coordinates(0.0,0.0),
 	val price : String = "",
 	val phone : String = "",
 	@SerializedName("display_phone") val displayPhone : String = "",

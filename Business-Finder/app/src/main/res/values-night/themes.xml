@@ -18,7 +18,7 @@
         <item name="search_icon">@drawable/search_icon_night</item>
         <item name="category_text_main">@drawable/category_name_night</item>
         <item name="default_color">@color/white</item>
-
+        <item name="history_icon">@drawable/history_icon_night</item>
 
     </style>
 </resources>

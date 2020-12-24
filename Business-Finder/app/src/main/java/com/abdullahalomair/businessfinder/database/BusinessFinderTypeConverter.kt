@@ -23,6 +23,14 @@ class BusinessFinderTypeConverter {
         return Gson().toJson(list)
     }
     @TypeConverter
+    fun fromListOfString(list: List<String>):String{
+        return Gson().toJson(list)
+    }
+    @TypeConverter
+    fun toListOfString(list: String):List<String>{
+        return Gson().fromJson(list, listOf<String>()::class.java)
+    }
+    @TypeConverter
     fun toForeCast(list: String):Forecast{
         return Gson().fromJson(list, Forecast::class.java)
     }

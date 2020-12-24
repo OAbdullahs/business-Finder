@@ -1,6 +1,7 @@
 package com.abdullahalomair.businessfinder.model.wathermodel.forecats
 
 import android.os.Parcelable
+import androidx.room.Embedded
 import com.abdullahalomair.businessfinder.model.wathermodel.Condition
 import com.google.gson.annotations.SerializedName
 import kotlinx.android.parcel.Parcelize

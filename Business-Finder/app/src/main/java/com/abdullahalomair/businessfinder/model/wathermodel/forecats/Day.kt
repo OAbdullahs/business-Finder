@@ -1,6 +1,7 @@
 package com.abdullahalomair.businessfinder.model.wathermodel.forecats
 
 import android.os.Parcelable
+import androidx.room.Embedded
 import com.abdullahalomair.businessfinder.model.wathermodel.Condition
 import com.google.gson.annotations.SerializedName
 import kotlinx.android.parcel.Parcelize
@@ -8,7 +9,6 @@ import kotlinx.android.parcel.Parcelize
 
 @Parcelize
 data class Day (
-
     @SerializedName("maxtemp_c") val maxTemp_c : Double = 0.0,
     @SerializedName("maxtemp_f") val maxTemp_f : Double= 0.0,
     @SerializedName("mintemp_c") val minTemp_c : Double= 0.0,

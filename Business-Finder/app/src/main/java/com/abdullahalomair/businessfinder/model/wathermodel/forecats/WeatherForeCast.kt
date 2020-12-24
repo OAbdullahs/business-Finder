@@ -13,10 +13,10 @@ import java.util.*
 
 
 @Parcelize
-@Entity
+
 data class WeatherForeCast (
     @PrimaryKey val business_id: UUID = UUID.randomUUID(),
-    @Embedded @SerializedName("location") val location : Location = Location(),
-    @Embedded @SerializedName("current") val current : Current = Current(),
-    @Embedded @SerializedName("forecast") val forecast : Forecast,
+    @SerializedName("location") val location : Location = Location(),
+    @SerializedName("current") val current : Current = Current(),
+    @SerializedName("forecast") val forecast : Forecast,
 ):Parcelable

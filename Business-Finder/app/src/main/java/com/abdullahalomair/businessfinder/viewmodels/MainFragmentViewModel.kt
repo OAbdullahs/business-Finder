@@ -8,6 +8,7 @@ import androidx.lifecycle.LiveData
 import com.abdullahalomair.businessfinder.R
 import com.abdullahalomair.businessfinder.controllers.BusinessRepository
 import com.abdullahalomair.businessfinder.model.wathermodel.WeatherModel
+import com.abdullahalomair.businessfinder.model.wathermodel.forecats.WeatherForeCast
 import com.abdullahalomair.businessfinder.model.yelpmodel.BusinessDetails
 import com.abdullahalomair.businessfinder.model.yelpmodel.BusinessesList
 import com.abdullahalomair.businessfinder.model.yelpmodel.Categories
@@ -17,6 +18,43 @@ import kotlinx.coroutines.*
 class MainFragmentViewModel(private val context: Context): BaseObservable() {
 
     private val repository = BusinessRepository.get()
+
+    //Get data from Local
+    fun getBusinessListLocal():LiveData<BusinessesList>?{
+        return repository.getBusinessListLocal()
+    }
+    suspend fun getBusinessDetailLocal(businessId: String): BusinessDetails?{
+        return repository.getBusinessDetailLocal(businessId)
+    }
+    suspend fun getWeatherDataLocal(businessId: String): WeatherModel?{
+        return repository.getWeatherDataLocal(businessId)
+    }
+    fun getWeatherForecastLocal(businessId: String): LiveData<WeatherForeCast>? {
+        return repository.getWeatherForecastLocal(businessId)
+    }
+
+    //Insert Data to Database
+    fun insertBusinessListLocal(businessesList: BusinessesList) =
+        repository.insertBusinessListLocal(businessesList)
+
+    fun insertBusinessDetailsLocal(businessDetails: BusinessDetails)  =
+        repository.insertBusinessDetailsLocal(businessDetails)
+    fun insertWeatherDataLocal(weatherModel: WeatherModel) =
+        repository.insertWeatherDataLocal(weatherModel)
+    fun insertWeatherForeCastLocal(weatherForeCast: WeatherForeCast) =
+        repository.insertWeatherForeCastLocal(weatherForeCast)
+
+    //Delete from Database
+    fun deleteBusinessListLocal() =
+        repository.deleteBusinessListLocal()
+    fun deleteBusinessDetailsLocal() =
+        repository.deleteBusinessDetailsLocal()
+    fun deleteWeatherDataLocal() =
+        repository.deleteWeatherDataLocal()
+    fun deleteWeatherForeCastLocal() =
+        repository.deleteWeatherForeCastLocal()
+
+
       fun getBusinessList(location:String): LiveData<BusinessesList> {
         return repository.getBusinessList(location)
     }
@@ -43,20 +81,9 @@ class MainFragmentViewModel(private val context: Context): BaseObservable() {
     }
 
 
-    val textWatcher = object :TextWatcher{
-        override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
-
-        override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-        }
-
-        override fun afterTextChanged(s: Editable?) {
-
-        }
-
-    }
 
 
-    private   fun finalFilteringResult(catPair: List<Pair<String,Int>>, cat: List<Categories>): MutableList<Pair<String, Int>> {
+    private  fun finalFilteringResult(catPair: List<Pair<String,Int>>, cat: List<Categories>): MutableList<Pair<String, Int>> {
         val finalResult: MutableList<Pair<String,Int>> = mutableListOf()
         val text:String = context.getString(R.string.all_categories)
         finalResult.add(text to catPair.size)
@@ -91,7 +118,7 @@ class MainFragmentViewModel(private val context: Context): BaseObservable() {
         }
         return categoryQuantity.toList()
     }
-    private   fun getListOfCategories(data: BusinessesList): List<Categories>{
+    private  fun getListOfCategories(data: BusinessesList): List<Categories>{
 
         val categories: MutableList<Categories> = mutableListOf()
         data.businesses.forEach { data ->

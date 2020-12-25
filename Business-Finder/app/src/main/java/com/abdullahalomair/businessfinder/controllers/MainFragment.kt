@@ -30,6 +30,7 @@ import com.abdullahalomair.businessfinder.viewmodels.MainFragmentViewModel
 import com.blongho.country_data.World
 import com.google.gson.Gson
 import kotlinx.coroutines.*
+import java.lang.NullPointerException
 
 
 private const val CATEGORY_POSITION = "Category_Position"
@@ -61,7 +62,6 @@ class MainFragment: Fragment() {
             R.layout.main_fragment,
             container, false
         )
-        binding.categoryProgressBar.visibility = View.GONE
         binding.categoryProgressBar.visibility = View.VISIBLE
         binding.recentVisitRecyclerview.apply {
             layoutManager  = LinearLayoutManager(requireContext())
@@ -76,7 +76,20 @@ class MainFragment: Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
             initAutoTextView()
-        updateUI("New York")
+
+        binding.viewModel?.getBusinessListLocal()?.observe(
+            viewLifecycleOwner,{businessesList ->
+                if (businessesList != null) {
+                    updateUI(businessesList)
+                }else
+                {
+                    updateUIOnline("New York")
+                }
+            }
+        )
+
+
+
 
     }
 
@@ -103,6 +116,12 @@ class MainFragment: Fragment() {
                     }
                 }
                 binding.searchRestaurants.addTextChangedListener(autoCompleteTextWatcher(getCities))
+                binding.searchRestaurants.setOnItemClickListener { parent, _, position, _ ->
+                    updateUIOnline(parent.getItemAtPosition(position).toString())
+                    binding.categoryProgressBar.visibility = View.VISIBLE
+                    binding.categoryRecyclerview.visibility = View.GONE
+
+                }
             }
 
         }
@@ -241,38 +260,40 @@ class MainFragment: Fragment() {
         }
         return mutableList
     }
-    private fun updateUI(searchId: String){
+    private fun updateUIOnline(searchId: String){
         binding.viewModel?.getBusinessList(searchId)?.observe(
             requireActivity(), { businessesData ->
-                businessesList = businessesData
-                scope.launch {
-                    val data =
-                        async { binding.viewModel?.getFinalCategoryData(businessesData)?.toList() }
-                    withContext(Dispatchers.Main) {
-                        binding.categoryRecyclerview.apply {
-                            if (data.await() != null) {
-                                categoryAdapter = CategoryAdapter(
-                                    requireContext(),
-                                    data.await()!!,
-                                    this@MainFragment::updateViewByCategory
-                                )
-                                adapter = categoryAdapter
-                                layoutManager = LinearLayoutManager(
-                                    requireContext(),
-                                    LinearLayoutManager.HORIZONTAL,
-                                    false
-                                )
-                                adapter?.stateRestorationPolicy =
-                                    RecyclerView.Adapter.StateRestorationPolicy.PREVENT_WHEN_EMPTY
-                            }
-                            binding.categoryRecyclerview.visibility = View.VISIBLE
-                            binding.categoryProgressBar.visibility = View.GONE
-                        }
-                    }
-                }
-                updateRecyclerView(businessesData.businesses)
+                updateUI(businessesData)
             }
         )
+    }
+    private fun updateUI(businessesList: BusinessesList){
+        scope.launch {
+            val data =
+                async { binding.viewModel?.getFinalCategoryData(businessesList)?.toList() }
+            withContext(Dispatchers.Main) {
+                binding.categoryRecyclerview.apply {
+                    if (data.await() != null) {
+                        categoryAdapter = CategoryAdapter(
+                            requireContext(),
+                            data.await()!!,
+                            this@MainFragment::updateViewByCategory
+                        )
+                        adapter = categoryAdapter
+                        layoutManager = LinearLayoutManager(
+                            requireContext(),
+                            LinearLayoutManager.HORIZONTAL,
+                            false
+                        )
+                        adapter?.stateRestorationPolicy =
+                            RecyclerView.Adapter.StateRestorationPolicy.PREVENT_WHEN_EMPTY
+                    }
+                    binding.categoryRecyclerview.visibility = View.VISIBLE
+                    binding.categoryProgressBar.visibility = View.GONE
+                }
+            }
+        }
+        updateRecyclerView(businessesList.businesses)
     }
     private fun updateViewByCategory(categoryName: String){
         if (categoryName == ALL_CATEGORY){

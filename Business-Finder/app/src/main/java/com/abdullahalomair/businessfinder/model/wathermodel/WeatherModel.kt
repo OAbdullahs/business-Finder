@@ -12,6 +12,7 @@ import java.util.*
 @Entity
 data class WeatherModel (
 	@PrimaryKey val id:UUID = UUID.randomUUID(),
+	val businessId:String = "",
 	@Embedded val location : Location = Location(),
 	@Embedded val current : Current = Current()
 ):Parcelable

@@ -19,7 +19,67 @@ class BusinessRepository private constructor(context: Context){
         BusinessFinderDataBase::class.java,
         DATABASE_NAME
     ).build()
+    private val dataBaseDao = database.getBusinessFinderDao()
     private val executor = Executors.newSingleThreadExecutor()
+
+    //Get data from database
+    fun getBusinessListLocal():LiveData<BusinessesList>?{
+        return dataBaseDao.getBusinessList()
+    }
+    suspend fun getBusinessDetailLocal(businessId: String): BusinessDetails?{
+        return dataBaseDao.getBusinessDetails(businessId)
+    }
+    suspend fun getWeatherDataLocal(businessId: String): WeatherModel?{
+        return dataBaseDao.getWeatherModel(businessId)
+    }
+    fun getWeatherForecastLocal(businessId: String): LiveData<WeatherForeCast>? {
+        return dataBaseDao.getWeatherForeCast(businessId)
+    }
+
+    //Insert Data to Database
+    fun insertBusinessListLocal(businessesList: BusinessesList){
+        executor.execute {
+            dataBaseDao.insertBusinessList(businessesList)
+        }
+    }
+    fun insertBusinessDetailsLocal(businessDetails: BusinessDetails){
+        executor.execute {
+            dataBaseDao.insertBusinessDetails(businessDetails)
+        }
+    }
+    fun insertWeatherDataLocal(weatherModel: WeatherModel){
+        executor.execute {
+            dataBaseDao.insertWeatherModel(weatherModel)
+        }
+    }
+    fun insertWeatherForeCastLocal(weatherForeCast: WeatherForeCast){
+        executor.execute {
+            dataBaseDao.insertWeatherForeCast(weatherForeCast)
+        }
+    }
+
+    //Delete from Database
+    fun deleteBusinessListLocal(){
+        executor.execute {
+            dataBaseDao.deleteBusinessList()
+        }
+    }
+    fun deleteBusinessDetailsLocal(){
+        executor.execute {
+            dataBaseDao.deleteBusinessDetails()
+        }
+    }
+    fun deleteWeatherDataLocal(){
+        executor.execute {
+            dataBaseDao.deleteWeatherModel()
+        }
+    }
+    fun deleteWeatherForeCastLocal(){
+        executor.execute {
+            dataBaseDao.deleteWeatherForeCast()
+        }
+    }
+
 
 
     fun getBusinessList(location:String):LiveData<BusinessesList>{

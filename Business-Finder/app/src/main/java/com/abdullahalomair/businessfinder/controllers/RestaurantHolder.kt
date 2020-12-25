@@ -14,16 +14,19 @@ import com.abdullahalomair.businessfinder.model.yelpmodel.Businesses
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import java.io.IOException
+import java.lang.IndexOutOfBoundsException
 
 
 class RestaurantHolder(
     private val binding: BusinessRecyclerviewBinding,
 ) : RecyclerView.ViewHolder(binding.root) {
-        private var callback: CallBacks? = null
+    private var callback: CallBacks? = null
+
     init {
-       callback =  itemView.context as CallBacks
+        callback = itemView.context as CallBacks
 
     }
+
     fun bind(allData: Businesses, businessDetails: BusinessDetails, weatherModel: WeatherModel) {
         Glide.with(itemView)
             .load(allData.imageUrl)
@@ -42,17 +45,21 @@ class RestaurantHolder(
         }
 
         itemView.setOnClickListener {
-                callback?.applicationNavigator(Navigator.BUSINESS_DETAILS,businesses = allData,businessDetails = businessDetails)
+            callback?.applicationNavigator(
+                Navigator.BUSINESS_DETAILS,
+                businesses = allData,
+                businessDetails = businessDetails
+            )
 
 
         }
 
         binding.apply {
-            businessNameText.apply{
+            businessNameText.apply {
                 text = allData.name
                 background = null
             }
-            businessTypeText.apply{
+            businessTypeText.apply {
                 text = allData.categories.last().title
                 background = null
             }
@@ -66,7 +73,7 @@ class RestaurantHolder(
 
     private fun displayWeatherData(weatherModel: WeatherModel) {
         binding.apply {
-            val weatherIcon  = "https://"+weatherModel.current.condition.icon
+            val weatherIcon = "https://" + weatherModel.current.condition.icon
             Glide.with(itemView)
                 .load(weatherIcon)
                 .thumbnail(Glide.with(itemView).load(R.drawable.placeholder))
@@ -84,46 +91,58 @@ class RestaurantHolder(
 
     private fun businessDetail(businessData: BusinessDetails) {
         try {
-        val isBusinessClosed = if (!businessData.hours.last().isOpenNow) {
-            itemView.context.getString(R.string.business_closed)
-        } else {
-            itemView.context.getString(R.string.business_open)
-        }
-
-        binding.isOpenText.apply {
-            val finalText = if (businessData.price.isEmpty()) {
-                isBusinessClosed
+            val isBusinessClosed = if (!businessData.hours.last().isOpenNow) {
+                itemView.context.getString(R.string.business_closed)
             } else {
-                "$isBusinessClosed . ${businessData.price}"
+                itemView.context.getString(R.string.business_open)
             }
-            text = finalText
-            background = null
-        }
+
+            binding.isOpenText.apply {
+                val finalText = if (businessData.price.isEmpty()) {
+                    isBusinessClosed
+                } else {
+                    "$isBusinessClosed . ${businessData.price}"
+                }
+                text = finalText
+                background = null
+            }
             binding.businessShimmerFragment.hideShimmer()
 
-        Glide.with(itemView)
-            .load(businessData.photos[0])
-            .thumbnail(Glide.with(itemView).load(R.drawable.placeholder))
-            .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
-            .into(binding.imageDetail1)
+            try {
 
-        Glide.with(itemView)
-            .load(businessData.photos[1])
-            .thumbnail(Glide.with(itemView).load(R.drawable.placeholder))
-            .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
-            .into(binding.imageDetail2)
+                Glide.with(itemView)
+                    .load(businessData.photos[0])
+                    .thumbnail(Glide.with(itemView).load(R.drawable.placeholder))
+                    .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
+                    .into(binding.imageDetail1)
+            } catch (e: IndexOutOfBoundsException) {
 
-        Glide.with(itemView)
-            .load(businessData.photos[2])
-            .thumbnail(Glide.with(itemView).load(R.drawable.placeholder))
-            .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
-            .into(binding.imageDetail3)
-        }catch (e: NoSuchElementException){
+            }
+            try {
+
+                Glide.with(itemView)
+                    .load(businessData.photos[1])
+                    .thumbnail(Glide.with(itemView).load(R.drawable.placeholder))
+                    .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
+                    .into(binding.imageDetail2)
+            } catch (e: IndexOutOfBoundsException) {
+
+            }
+
+            try {
+
+                Glide.with(itemView)
+                    .load(businessData.photos[2])
+                    .thumbnail(Glide.with(itemView).load(R.drawable.placeholder))
+                    .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
+                    .into(binding.imageDetail3)
+            } catch (e: IndexOutOfBoundsException) {
+
+            }
+        } catch (e: NoSuchElementException) {
         }
 
     }
-
-
 
 
 }

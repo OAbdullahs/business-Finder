@@ -15,7 +15,8 @@ import java.util.*
 @Parcelize
 @Entity
 data class WeatherForeCast (
-    @PrimaryKey val business_id: UUID = UUID.randomUUID(),
+    @PrimaryKey val id: UUID = UUID.randomUUID(),
+    val businessId:String = "",
     @Embedded  val location : Location = Location(),
     @Embedded val current : Current = Current(),
     @Embedded  val forecast : Forecast,

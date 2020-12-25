@@ -1,13 +1,19 @@
 package com.abdullahalomair.businessfinder.model.yelpmodel
 
-import android.location.Location
 import android.os.Parcelable
+import androidx.room.Embedded
+import androidx.room.Entity
+import androidx.room.PrimaryKey
+import com.abdullahalomair.businessfinder.model.wathermodel.Location
 import com.google.gson.annotations.SerializedName
 import kotlinx.android.parcel.Parcelize
+import java.util.*
 
-
+private const val PREFIX = "bus_"
 @Parcelize
+@Entity
 data class BusinessDetails (
+    @PrimaryKey val id_uuid:UUID = UUID.randomUUID(),
     val id : String = "",
     val alias : String = "",
     val name : String = "",
@@ -18,10 +24,9 @@ data class BusinessDetails (
     @SerializedName("review_count") val reviewCount : Int = 0,
     val categories : List<Categories> = emptyList(),
     val rating : Float = 0.0f,
-    val location : Location  = Location(""),
-    val coordinates : Coordinates = Coordinates(),
+    @Embedded(prefix = PREFIX)val location : Location = Location(""),
+    @Embedded(prefix = PREFIX)val coordinates : Coordinates = Coordinates(),
     val photos : List<String> = emptyList(),
     val price : String = "",
     val hours : List<Hours> = emptyList(),
-    val transactions : List<String> = emptyList()
 ):Parcelable

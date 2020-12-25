@@ -2,14 +2,24 @@ package com.abdullahalomair.businessfinder.controllers
 
 import android.content.Context
 import androidx.lifecycle.LiveData
+import androidx.room.Room
 import com.abdullahalomair.businessfinder.api.weatherapi.weatherfetcher.WeatherFetcher
 import com.abdullahalomair.businessfinder.api.yelpapi.yelpfetcher.YelpFetcher
+import com.abdullahalomair.businessfinder.database.BusinessFinderDataBase
 import com.abdullahalomair.businessfinder.model.wathermodel.WeatherModel
 import com.abdullahalomair.businessfinder.model.wathermodel.forecats.WeatherForeCast
 import com.abdullahalomair.businessfinder.model.yelpmodel.BusinessDetails
 import com.abdullahalomair.businessfinder.model.yelpmodel.BusinessesList
+import java.util.concurrent.Executors
 
+private const val DATABASE_NAME = "BusinessFinder-database"
 class BusinessRepository private constructor(context: Context){
+    private val database : BusinessFinderDataBase = Room.databaseBuilder(
+        context.applicationContext,
+        BusinessFinderDataBase::class.java,
+        DATABASE_NAME
+    ).build()
+    private val executor = Executors.newSingleThreadExecutor()
 
 
     fun getBusinessList(location:String):LiveData<BusinessesList>{

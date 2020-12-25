@@ -4,4 +4,5 @@
     <attr name="search_icon" format="reference"/>
     <attr name="category_text_main" format="reference"/>
     <attr name="default_color" format="reference"/>
+    <attr name="history_icon" format="reference"/>
 </resources>

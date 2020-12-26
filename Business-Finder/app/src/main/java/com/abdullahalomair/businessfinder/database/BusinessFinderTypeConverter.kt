@@ -7,6 +7,7 @@ import com.abdullahalomair.businessfinder.model.yelpmodel.Businesses
 import com.abdullahalomair.businessfinder.model.yelpmodel.Categories
 import com.abdullahalomair.businessfinder.model.yelpmodel.Hours
 import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 import java.util.*
 
 
@@ -29,36 +30,44 @@ class BusinessFinderTypeConverter {
         return Gson().fromJson(listOfForeCastDay, listOf<ForeCastDay>()::class.java)
     }
     @TypeConverter
-    fun toListOfCategory(categories: String):List<Categories>?{
-        return Gson().fromJson(categories, listOf<Categories>()::class.java)
+    fun toListOfCategory(categories: String):MutableList<Categories>?{
+        val type = object: TypeToken<MutableList<Categories>>() {}.type
+        return Gson().fromJson(categories, type)
     }
     @TypeConverter
-    fun fromListOfCategory(categories: List<Categories>):String?{
-        return Gson().toJson(categories)
+    fun fromListOfCategory(categories: MutableList<Categories>):String?{
+        val type = object: TypeToken<MutableList<Categories>>() {}.type
+        return Gson().toJson(categories, type)
     }
     @TypeConverter
-    fun toListOfString(strings: String):List<String>?{
-        return Gson().fromJson(strings, listOf<String>()::class.java)
+    fun toListOfString(strings: String):MutableList<String>?{
+        val type = object: TypeToken<MutableList<String>>() {}.type
+        return Gson().fromJson(strings, type)
     }
     @TypeConverter
-    fun fromListOfString(strings: List<String>):String?{
-        return Gson().toJson(strings)
+    fun fromListOfString(strings: MutableList<String>):String?{
+        val type = object: TypeToken<MutableList<String>>() {}.type
+        return Gson().toJson(strings, type)
     }
     @TypeConverter
-    fun toListOfHours(hours: String):List<Hours>?{
-        return Gson().fromJson(hours, listOf<Hours>()::class.java)
+    fun toListOfHours(hours: String):MutableList<Hours>?{
+        val type = object: TypeToken<MutableList<Hours>>() {}.type
+        return Gson().fromJson(hours, type)
     }
     @TypeConverter
-    fun fromListOfHours(hours: List<Hours>):String?{
+    fun fromListOfHours(hours: MutableList<Hours>):String?{
+        val type = object: TypeToken<MutableList<Hours>>() {}.type
         return Gson().toJson(hours)
     }
     @TypeConverter
-    fun toListOfBusinesses(businesses: String):List<Businesses>?{
-        return Gson().fromJson(businesses, listOf<Businesses>()::class.java)
+    fun toListOfBusinesses(businesses: String):MutableList<Businesses>?{
+        val type = object: TypeToken<MutableList<Businesses>>() {}.type
+        return Gson().fromJson(businesses, type)
     }
     @TypeConverter
-    fun fromListOfBusinesses(businesses: List<Businesses>):String?{
-        return Gson().toJson(businesses)
+    fun fromListOfBusinesses(businesses: MutableList<Businesses>):String?{
+        val type = object: TypeToken<MutableList<Businesses>>() {}.type
+        return Gson().toJson(businesses,type)
     }
 
 }

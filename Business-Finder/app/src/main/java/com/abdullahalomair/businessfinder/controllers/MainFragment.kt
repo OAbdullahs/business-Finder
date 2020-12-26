@@ -1,5 +1,6 @@
 package com.abdullahalomair.businessfinder.controllers
 
+import android.app.Activity
 import android.content.res.AssetManager
 import android.content.res.Configuration
 import android.graphics.drawable.Drawable
@@ -10,6 +11,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.InputMethodManager
 import android.widget.ArrayAdapter
 import android.widget.TextView
 import androidx.databinding.DataBindingUtil
@@ -80,6 +82,7 @@ class MainFragment: Fragment() {
         binding.viewModel?.getBusinessListLocal()?.observe(
             viewLifecycleOwner,{businessesList ->
                 if (businessesList != null) {
+                    Log.i("Test",businessesList.businesses.toString())
                     updateUI(businessesList)
                 }else
                 {
@@ -117,9 +120,13 @@ class MainFragment: Fragment() {
                 }
                 binding.searchRestaurants.addTextChangedListener(autoCompleteTextWatcher(getCities))
                 binding.searchRestaurants.setOnItemClickListener { parent, _, position, _ ->
+                    binding.searchRestaurants.text.clear()
                     updateUIOnline(parent.getItemAtPosition(position).toString())
                     binding.categoryProgressBar.visibility = View.VISIBLE
                     binding.categoryRecyclerview.visibility = View.GONE
+                    val imm =
+                        context?.getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager?
+                    imm?.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0)
 
                 }
             }
@@ -262,21 +269,27 @@ class MainFragment: Fragment() {
     }
     private fun updateUIOnline(searchId: String){
         binding.viewModel?.getBusinessList(searchId)?.observe(
-            requireActivity(), { businessesData ->
+            viewLifecycleOwner, { businessesData ->
+                addToDatabase(businessesData)
                 updateUI(businessesData)
             }
         )
     }
-    private fun updateUI(businessesList: BusinessesList){
+    private fun addToDatabase(businessList: BusinessesList){
+        binding.viewModel?.deleteBusinessListLocal()
+        binding.viewModel?.insertBusinessListLocal(businessList)
+    }
+    private fun updateUI(businessList: BusinessesList){
+        businessesList = businessList
         scope.launch {
             val data =
-                async { binding.viewModel?.getFinalCategoryData(businessesList)?.toList() }
+                binding.viewModel?.getFinalCategoryData(businessList)?.toList()
             withContext(Dispatchers.Main) {
                 binding.categoryRecyclerview.apply {
-                    if (data.await() != null) {
+                    if (data != null) {
                         categoryAdapter = CategoryAdapter(
                             requireContext(),
-                            data.await()!!,
+                            data,
                             this@MainFragment::updateViewByCategory
                         )
                         adapter = categoryAdapter
@@ -293,7 +306,7 @@ class MainFragment: Fragment() {
                 }
             }
         }
-        updateRecyclerView(businessesList.businesses)
+        updateRecyclerView(businessList.businesses)
     }
     private fun updateViewByCategory(categoryName: String){
         if (categoryName == ALL_CATEGORY){

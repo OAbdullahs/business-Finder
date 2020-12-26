@@ -70,7 +70,7 @@ class MainFragmentViewModel(private val context: Context): BaseObservable() {
 
 
 
-    suspend fun  getFinalCategoryData(data: BusinessesList): MutableList<Pair<String, Int>> {
+     fun  getFinalCategoryData(data: BusinessesList): MutableList<Pair<String, Int>> {
         val finalResult:MutableList<Pair<String,Int>>
             //Get Data from Server Then extract what needed
             val dataPairs = getCategoriesPair(data).filter { it.first.isNotBlank() }
@@ -97,7 +97,6 @@ class MainFragmentViewModel(private val context: Context): BaseObservable() {
         return finalResult
     }
     private  fun getCategoriesPair(data: BusinessesList): List<Pair<String,Int>> {
-
         val categoryQuantity: MutableList<Pair<String, Int>> = mutableListOf()
         val categories = mutableSetOf<String>()
         data.businesses.forEach { data ->

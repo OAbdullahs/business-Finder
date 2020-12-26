@@ -1,18 +1,14 @@
 package com.abdullahalomair.businessfinder.viewmodels
 
 import android.content.Context
-import android.text.Editable
-import android.text.TextWatcher
 import androidx.databinding.BaseObservable
 import androidx.lifecycle.LiveData
 import com.abdullahalomair.businessfinder.R
 import com.abdullahalomair.businessfinder.controllers.BusinessRepository
-import com.abdullahalomair.businessfinder.model.wathermodel.WeatherModel
 import com.abdullahalomair.businessfinder.model.wathermodel.forecats.WeatherForeCast
 import com.abdullahalomair.businessfinder.model.yelpmodel.BusinessDetails
 import com.abdullahalomair.businessfinder.model.yelpmodel.BusinessesList
 import com.abdullahalomair.businessfinder.model.yelpmodel.Categories
-import kotlinx.coroutines.*
 
 
 class MainFragmentViewModel(private val context: Context): BaseObservable() {
@@ -26,10 +22,7 @@ class MainFragmentViewModel(private val context: Context): BaseObservable() {
     suspend fun getBusinessDetailLocal(businessId: String): BusinessDetails?{
         return repository.getBusinessDetailLocal(businessId)
     }
-    suspend fun getWeatherDataLocal(businessId: String): WeatherModel?{
-        return repository.getWeatherDataLocal(businessId)
-    }
-    fun getWeatherForecastLocal(businessId: String): LiveData<WeatherForeCast>? {
+    suspend fun getWeatherForecastLocal(businessId: String): WeatherForeCast? {
         return repository.getWeatherForecastLocal(businessId)
     }
 
@@ -39,8 +32,6 @@ class MainFragmentViewModel(private val context: Context): BaseObservable() {
 
     fun insertBusinessDetailsLocal(businessDetails: BusinessDetails)  =
         repository.insertBusinessDetailsLocal(businessDetails)
-    fun insertWeatherDataLocal(weatherModel: WeatherModel) =
-        repository.insertWeatherDataLocal(weatherModel)
     fun insertWeatherForeCastLocal(weatherForeCast: WeatherForeCast) =
         repository.insertWeatherForeCastLocal(weatherForeCast)
 
@@ -49,8 +40,6 @@ class MainFragmentViewModel(private val context: Context): BaseObservable() {
         repository.deleteBusinessListLocal()
     fun deleteBusinessDetailsLocal() =
         repository.deleteBusinessDetailsLocal()
-    fun deleteWeatherDataLocal() =
-        repository.deleteWeatherDataLocal()
     fun deleteWeatherForeCastLocal() =
         repository.deleteWeatherForeCastLocal()
 
@@ -59,8 +48,8 @@ class MainFragmentViewModel(private val context: Context): BaseObservable() {
         return repository.getBusinessList(location)
     }
 
-     suspend fun getWeatherDetail (location: String):WeatherModel {
-        return repository.getWeatherData(location) ?: WeatherModel()
+     suspend fun getWeatherForeCastDetail (location: String):WeatherForeCast {
+        return repository.getWeatherForecast(location)
     }
 
      suspend fun getBusinessesDetails (businessId:String): BusinessDetails {

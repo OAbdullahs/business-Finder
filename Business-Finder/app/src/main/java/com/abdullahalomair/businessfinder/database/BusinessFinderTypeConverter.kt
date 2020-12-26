@@ -22,12 +22,14 @@ class BusinessFinderTypeConverter {
     }
 
     @TypeConverter
-    fun fromListForCast(listOfForeCastDay: List<ForeCastDay>):String?{
-        return Gson().toJson(listOfForeCastDay)
+    fun fromListForCast(listOfForeCastDay: MutableList<ForeCastDay>):String?{
+        val type = object: TypeToken<MutableList<ForeCastDay>>() {}.type
+        return Gson().toJson(listOfForeCastDay, type)
     }
     @TypeConverter
-    fun toListForCast(listOfForeCastDay: String):List<ForeCastDay>?{
-        return Gson().fromJson(listOfForeCastDay, listOf<ForeCastDay>()::class.java)
+    fun toListForCast(listOfForeCastDay: String):MutableList<ForeCastDay>?{
+        val type = object: TypeToken<MutableList<ForeCastDay>>() {}.type
+        return Gson().fromJson(listOfForeCastDay, type)
     }
     @TypeConverter
     fun toListOfCategory(categories: String):MutableList<Categories>?{

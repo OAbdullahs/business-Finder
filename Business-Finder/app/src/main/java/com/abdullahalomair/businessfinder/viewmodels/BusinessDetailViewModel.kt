@@ -23,7 +23,7 @@ class BusinessDetailViewModel(private val context: Context): BaseObservable() {
 
     private val repository = BusinessRepository.get()
 
-    fun getWeatherForecast(location: String): LiveData<WeatherForeCast> {
+    suspend fun getWeatherForecast(location: String): WeatherForeCast {
         return repository.getWeatherForecast(location)
     }
     suspend fun getBusinessDetails(businessId:String): BusinessDetails? {

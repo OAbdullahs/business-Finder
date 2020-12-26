@@ -25,10 +25,7 @@
         card_view:layout_constraintEnd_toEndOf="parent"
         card_view:layout_constraintStart_toStartOf="parent"
         card_view:layout_constraintTop_toTopOf="parent">
-        <com.facebook.shimmer.ShimmerFrameLayout
-            android:id="@+id/business_shimmer_fragment"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
@@ -75,6 +72,13 @@
                 tools:rating="3" />
 
 
+            <com.facebook.shimmer.ShimmerFrameLayout
+                android:id="@+id/is_open_fragment"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                card_view:layout_constraintBottom_toBottomOf="parent"
+                card_view:layout_constraintStart_toStartOf="@+id/business_type_text"
+                card_view:layout_constraintTop_toBottomOf="@+id/business_type_text">
                 <TextView
                     android:id="@+id/is_open_text"
                     android:layout_width="wrap_content"
@@ -83,10 +87,9 @@
                     android:layout_marginTop="5dp"
                     android:background="@color/dark_gray"
                     android:layout_marginBottom="5dp"
-                    card_view:layout_constraintBottom_toBottomOf="parent"
-                    card_view:layout_constraintStart_toStartOf="@+id/business_type_text"
-                    card_view:layout_constraintTop_toBottomOf="@+id/business_type_text"
                     tools:text="Open" />
+            </com.facebook.shimmer.ShimmerFrameLayout>
+
 
 
 
@@ -103,42 +106,40 @@
                 card_view:layout_constraintTop_toTopOf="parent"
                 tools:srcCompat="@tools:sample/avatars" />
 
-            <LinearLayout
+            <com.facebook.shimmer.ShimmerFrameLayout
                 android:id="@+id/images_recyclerview_fragment"
                 android:layout_width="80dp"
                 android:layout_height="0dp"
-                android:orientation="vertical"
-                android:weightSum="3"
                 card_view:layout_constraintBottom_toBottomOf="@+id/restaurant_main_image"
                 card_view:layout_constraintEnd_toEndOf="parent"
                 card_view:layout_constraintStart_toEndOf="@+id/restaurant_main_image"
                 card_view:layout_constraintTop_toTopOf="@+id/restaurant_main_image">
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical"
+                    android:weightSum="2"
+                    >
+                    <ImageView
+                        android:id="@+id/image_detail_1"
+                        android:layout_width="match_parent"
+                        android:layout_height="0dp"
+                        android:layout_marginEnd="5dp"
+                        android:scaleType="centerCrop"
+                        android:background="@drawable/images_border"
+                        android:layout_weight="1"/>
 
-                <ImageView
-                    android:id="@+id/image_detail_1"
-                    android:layout_width="match_parent"
-                    android:layout_height="0dp"
-                    android:layout_weight="1"
-                    android:layout_marginEnd="5dp"
-                    android:scaleType="centerCrop"
-                    android:background="@drawable/images_border"/>
-                <ImageView
-                    android:id="@+id/image_detail_2"
-                    android:layout_width="match_parent"
-                    android:layout_height="0dp"
-                    android:layout_marginEnd="5dp"
-                    android:scaleType="centerCrop"
-                    android:background="@drawable/images_border"
-                    android:layout_weight="1"/>
-                <ImageView
-                    android:id="@+id/image_detail_3"
-                    android:layout_width="match_parent"
-                    android:scaleType="centerCrop"
-                    android:layout_marginEnd="5dp"
-                    android:background="@drawable/images_border"
-                    android:layout_height="0dp"
-                    android:layout_weight="1"/>
-            </LinearLayout>
+                    <ImageView
+                        android:id="@+id/image_detail_2"
+                        android:layout_width="match_parent"
+                        android:layout_height="0dp"
+                        android:layout_marginEnd="5dp"
+                        android:layout_weight="1"
+                        android:background="@drawable/images_border"
+                        android:scaleType="centerCrop" />
+                </LinearLayout>
+            </com.facebook.shimmer.ShimmerFrameLayout>
+
 
 
 
@@ -155,23 +156,29 @@
                 card_view:layout_constraintVertical_bias="1.0"
                 tools:srcCompat="@tools:sample/avatars" />
 
-            <TextView
+            <com.facebook.shimmer.ShimmerFrameLayout
                 android:id="@+id/weather_value"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginEnd="5dp"
-                android:textAlignment="textStart"
-                android:minWidth="50dp"
-                android:textSize="19sp"
-                android:background="@color/dark_gray"
                 card_view:layout_constraintBottom_toBottomOf="@+id/weather_image"
                 card_view:layout_constraintEnd_toEndOf="parent"
-                card_view:layout_constraintTop_toTopOf="@+id/weather_image"
-                tools:text="Weather value" />
+                card_view:layout_constraintTop_toTopOf="@+id/weather_image">
+                <TextView
+                    android:id="@+id/weather_value_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="5dp"
+                    android:textAlignment="textStart"
+                    android:minWidth="50dp"
+                    android:textSize="19sp"
+                    android:background="@color/dark_gray"
+                    tools:text="Weather value" />
+            </com.facebook.shimmer.ShimmerFrameLayout>
+
 
 
         </androidx.constraintlayout.widget.ConstraintLayout>
-        </com.facebook.shimmer.ShimmerFrameLayout>
+
 
     </androidx.cardview.widget.CardView>
 </androidx.constraintlayout.widget.ConstraintLayout>

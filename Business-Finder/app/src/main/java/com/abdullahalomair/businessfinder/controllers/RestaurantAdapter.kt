@@ -6,18 +6,27 @@ import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.abdullahalomair.businessfinder.R
 import com.abdullahalomair.businessfinder.databinding.BusinessRecyclerviewBinding
-import com.abdullahalomair.businessfinder.model.wathermodel.WeatherModel
+import com.abdullahalomair.businessfinder.model.wathermodel.forecats.WeatherForeCast
 import com.abdullahalomair.businessfinder.model.yelpmodel.BusinessDetails
 import com.abdullahalomair.businessfinder.model.yelpmodel.Businesses
 import kotlinx.coroutines.*
-import kotlin.reflect.KSuspendFunction1
 
 class RestaurantAdapter(private val businesses: List<Businesses>,
-                        private val getWeatherDetail: KSuspendFunction1<String, WeatherModel>,
-                        private val getBusinessDetail: KSuspendFunction1<String, BusinessDetails>,
+                         getWeatherDetail: MutableList<WeatherForeCast>,
+                         getBusinessDetail: List<BusinessDetails>,
                         )
     :RecyclerView.Adapter<RestaurantHolder>() {
-    private val scope = CoroutineScope(Dispatchers.Default)
+    private var weatherDetail = getWeatherDetail
+    set(value){
+        notifyDataSetChanged()
+        field = value
+    }
+    private var businessModel = getBusinessDetail
+        set(value) {
+            notifyDataSetChanged()
+            field = value
+        }
+private val scope = CoroutineScope(Dispatchers.Default)
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RestaurantHolder {
         val binding: BusinessRecyclerviewBinding = DataBindingUtil.inflate(
@@ -33,11 +42,13 @@ class RestaurantAdapter(private val businesses: List<Businesses>,
 
     override fun onBindViewHolder(holder: RestaurantHolder, position: Int) {
         scope.launch {
-            val latAndLng = "${businesses[position].coordinates.latitude},${businesses[position].coordinates.longitude}"
-        val businessDetail = getBusinessDetail(businesses[position].id)
-        val weatherDetail = getWeatherDetail(latAndLng)
+        val businessDetail = businessModel.find{ list -> list.id == businesses[position].id}
+        val weatherDetail = weatherDetail.find { list -> list.businessId == businesses[position].id }
             withContext(Dispatchers.Main){
-                holder.bind(businesses[position],businessDetail,weatherDetail)
+                holder.bind(businesses[position],
+                    businessDetail ?: BusinessDetails(),
+                    weatherDetail?: WeatherForeCast()
+                )
             }
         }
 

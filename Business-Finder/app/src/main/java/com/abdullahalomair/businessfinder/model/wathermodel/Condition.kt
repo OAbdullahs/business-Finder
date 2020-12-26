@@ -5,7 +5,6 @@ import androidx.room.Entity
 import kotlinx.android.parcel.Parcelize
 
 @Parcelize
-@Entity
 data class Condition (
 	 val text : String = "",
 	 val icon : String ="",

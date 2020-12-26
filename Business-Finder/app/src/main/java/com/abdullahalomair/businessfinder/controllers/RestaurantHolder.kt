@@ -8,7 +8,7 @@ import com.abdullahalomair.businessfinder.callbacks.CallBacks
 
 import com.abdullahalomair.businessfinder.databinding.BusinessRecyclerviewBinding
 import com.abdullahalomair.businessfinder.model.navigator.Navigator
-import com.abdullahalomair.businessfinder.model.wathermodel.WeatherModel
+import com.abdullahalomair.businessfinder.model.wathermodel.forecats.WeatherForeCast
 import com.abdullahalomair.businessfinder.model.yelpmodel.BusinessDetails
 import com.abdullahalomair.businessfinder.model.yelpmodel.Businesses
 import com.bumptech.glide.Glide
@@ -27,7 +27,10 @@ class RestaurantHolder(
 
     }
 
-    fun bind(allData: Businesses, businessDetails: BusinessDetails, weatherModel: WeatherModel) {
+    fun bind(allData: Businesses,
+             businessDetails: BusinessDetails,
+             weatherModel: WeatherForeCast )
+    {
         Glide.with(itemView)
             .load(allData.imageUrl)
             .thumbnail(Glide.with(itemView).load(R.drawable.placeholder))
@@ -71,7 +74,7 @@ class RestaurantHolder(
 
     }
 
-    private fun displayWeatherData(weatherModel: WeatherModel) {
+    private fun displayWeatherData(weatherModel: WeatherForeCast) {
         binding.apply {
             val weatherIcon = "https://" + weatherModel.current.condition.icon
             Glide.with(itemView)
@@ -80,9 +83,12 @@ class RestaurantHolder(
                 .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
                 .into(binding.weatherImage)
             val currentWeather = "${weatherModel.current.tempC}${0x00B0.toChar()}C"
-            weatherValue.apply {
-                text = currentWeather
-                background = null
+            weatherValueText.apply {
+                if (weatherModel.current.tempC != -20.0) {
+                    text = currentWeather
+                    background = null
+                    binding.weatherValue.hideShimmer()
+                }
             }
 
 
@@ -105,13 +111,13 @@ class RestaurantHolder(
                 }
                 text = finalText
                 background = null
+                binding.isOpenFragment.hideShimmer()
             }
-            binding.businessShimmerFragment.hideShimmer()
+
 
             try {
-
                 Glide.with(itemView)
-                    .load(businessData.photos[0])
+                    .load(businessData.photos[1])
                     .thumbnail(Glide.with(itemView).load(R.drawable.placeholder))
                     .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
                     .into(binding.imageDetail1)
@@ -119,23 +125,12 @@ class RestaurantHolder(
 
             }
             try {
-
-                Glide.with(itemView)
-                    .load(businessData.photos[1])
-                    .thumbnail(Glide.with(itemView).load(R.drawable.placeholder))
-                    .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
-                    .into(binding.imageDetail2)
-            } catch (e: IndexOutOfBoundsException) {
-
-            }
-
-            try {
-
                 Glide.with(itemView)
                     .load(businessData.photos[2])
                     .thumbnail(Glide.with(itemView).load(R.drawable.placeholder))
                     .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
-                    .into(binding.imageDetail3)
+                    .into(binding.imageDetail2)
+                binding.imagesRecyclerviewFragment.hideShimmer()
             } catch (e: IndexOutOfBoundsException) {
 
             }

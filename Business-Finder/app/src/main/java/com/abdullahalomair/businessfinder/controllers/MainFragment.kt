@@ -7,7 +7,6 @@ import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -23,7 +22,7 @@ import com.abdullahalomair.businessfinder.R
 import com.abdullahalomair.businessfinder.callbacks.CallBacks
 import com.abdullahalomair.businessfinder.databinding.MainFragmentBinding
 import com.abdullahalomair.businessfinder.model.localmodel.Cities
-import com.abdullahalomair.businessfinder.model.wathermodel.WeatherModel
+import com.abdullahalomair.businessfinder.model.wathermodel.forecats.WeatherForeCast
 import com.abdullahalomair.businessfinder.model.yelpmodel.BusinessDetails
 import com.abdullahalomair.businessfinder.model.yelpmodel.Businesses
 import com.abdullahalomair.businessfinder.model.yelpmodel.BusinessesList
@@ -32,7 +31,6 @@ import com.abdullahalomair.businessfinder.viewmodels.MainFragmentViewModel
 import com.blongho.country_data.World
 import com.google.gson.Gson
 import kotlinx.coroutines.*
-import java.lang.NullPointerException
 
 
 private const val CATEGORY_POSITION = "Category_Position"
@@ -45,6 +43,8 @@ class MainFragment: Fragment() {
     private lateinit var arrayAdapter: ArrayAdapter<String>
     private val scope = CoroutineScope(Dispatchers.IO)
     private lateinit var businessesList: BusinessesList
+    private val businessDetailsList: MutableList<BusinessDetails> = mutableListOf()
+    private val weatherModelList: MutableList<WeatherForeCast> = mutableListOf()
     private  var callback: CallBacks? = null
     private var didUserWrite = false
 
@@ -82,7 +82,6 @@ class MainFragment: Fragment() {
         binding.viewModel?.getBusinessListLocal()?.observe(
             viewLifecycleOwner,{businessesList ->
                 if (businessesList != null) {
-                    Log.i("Test",businessesList.businesses.toString())
                     updateUI(businessesList)
                 }else
                 {
@@ -100,26 +99,20 @@ class MainFragment: Fragment() {
         scope.launch {
             val getCities = getCitiesList()
             val getRecentSearched = getRecentSearchQueries()
-            val finalResult = mutableListOf<String>()
-            if (getRecentSearched != null){
-                finalResult.addAll(getRecentSearched)
-                finalResult.addAll(getCities)
-            }else{
-                finalResult.addAll(getCities)
-            }
             withContext(Dispatchers.Main){
                 if (getRecentSearched != null) {
                     arrayAdapter = customArrayAdapter(true, getRecentSearched.toList())
                     binding.searchRestaurants.setAdapter(arrayAdapter)
                     binding.searchRestaurants.setOnClickListener {
                         didUserWrite = false
-                        binding.searchRestaurants.setAdapter(customArrayAdapter(true,getRecentSearched!!.toList()))
+//                        binding.searchRestaurants.setAdapter(customArrayAdapter(true,getRecentSearched!!.toList()))
                         binding.searchRestaurants.showDropDown()
 
                     }
                 }
                 binding.searchRestaurants.addTextChangedListener(autoCompleteTextWatcher(getCities))
                 binding.searchRestaurants.setOnItemClickListener { parent, _, position, _ ->
+                    setRecentSearchQuery(parent.getItemAtPosition(position).toString())
                     binding.searchRestaurants.text.clear()
                     updateUIOnline(parent.getItemAtPosition(position).toString())
                     binding.categoryProgressBar.visibility = View.VISIBLE
@@ -225,8 +218,8 @@ class MainFragment: Fragment() {
         binding.recentVisitRecyclerview.apply {
             recentAdapter = RestaurantAdapter(
                 business,
-                this@MainFragment::getWeatherDetail,
-                this@MainFragment::getBusinessDetail,
+                weatherModelList,
+               businessDetailsList,
             )
             adapter = recentAdapter
 
@@ -239,7 +232,8 @@ class MainFragment: Fragment() {
     }
     private fun setRecentSearchQuery(query: String) {
         val encryptSharedPreferences = EncryptSharedPreferences.get()
-        val getQueries = encryptSharedPreferences.getStoredQueries()?.toMutableList()
+        val getQueries = getRecentSearchQueries()?.toMutableList()
+
         if (getQueries != null){
             if (getQueries.size == 5){
                  getQueries.removeAt(getQueries.size - 1)
@@ -254,8 +248,17 @@ class MainFragment: Fragment() {
             val firstTime = setOf(query)
             encryptSharedPreferences.setStoredQueries(firstTime)
         }
+        scope.launch {
+            val getRecentSearched = getRecentSearchQueries()?.toList()
+            withContext(Dispatchers.Main) {
+                if (getRecentSearched != null) {
+                    arrayAdapter = customArrayAdapter(true, getRecentSearched.toList())
+                    binding.searchRestaurants.setAdapter(arrayAdapter)
+                }
+            }
+        }
     }
-    private suspend fun getCitiesList(): MutableList<String> {
+    private  fun getCitiesList(): MutableList<String> {
         val assetManager:AssetManager = requireContext().assets
         val cities = assetManager.open("cities.json").bufferedReader().use {
             it.readText()
@@ -270,6 +273,7 @@ class MainFragment: Fragment() {
     private fun updateUIOnline(searchId: String){
         binding.viewModel?.getBusinessList(searchId)?.observe(
             viewLifecycleOwner, { businessesData ->
+                binding.viewModel?.deleteWeatherForeCastLocal()
                 addToDatabase(businessesData)
                 updateUI(businessesData)
             }
@@ -282,14 +286,14 @@ class MainFragment: Fragment() {
     private fun updateUI(businessList: BusinessesList){
         businessesList = businessList
         scope.launch {
-            val data =
+            val finalCategory =
                 binding.viewModel?.getFinalCategoryData(businessList)?.toList()
             withContext(Dispatchers.Main) {
                 binding.categoryRecyclerview.apply {
-                    if (data != null) {
+                    if (finalCategory != null) {
                         categoryAdapter = CategoryAdapter(
                             requireContext(),
-                            data,
+                            finalCategory,
                             this@MainFragment::updateViewByCategory
                         )
                         adapter = categoryAdapter
@@ -305,6 +309,8 @@ class MainFragment: Fragment() {
                     binding.categoryProgressBar.visibility = View.GONE
                 }
             }
+            withContext(Dispatchers.IO) { getBusinessDetail() }
+            withContext(Dispatchers.IO) { getWeatherDetail() }
         }
         updateRecyclerView(businessList.businesses)
     }
@@ -318,14 +324,47 @@ class MainFragment: Fragment() {
             )
         }
     }
-    private suspend fun getBusinessDetail(businessId: String): BusinessDetails {
-        val finalList = binding.viewModel?.getBusinessesDetails(businessId)
-        return finalList ?: BusinessDetails()
-    }
+    private suspend fun getBusinessDetail() {
+        val businessDetails = mutableListOf<BusinessDetails>()
+        for (list in businessesList.businesses){
+            val dataFromDatabase = binding.viewModel?.getBusinessDetailLocal(list.id)
+            if (dataFromDatabase != null){
+                businessDetails.add(dataFromDatabase)
+            }else{
+                val finalList = binding.viewModel?.getBusinessesDetails(list.id)
+                if (finalList != null){
+                    businessDetails.add(finalList)
+                    binding.viewModel?.insertBusinessDetailsLocal(finalList)
+                }
+            }
 
-    private suspend fun getWeatherDetail(location: String):WeatherModel{
-        val finalList = binding.viewModel?.getWeatherDetail(location)
-        return finalList ?: WeatherModel()
+        }
+        withContext(Dispatchers.Main) {
+            businessDetailsList.addAll(businessDetails)
+        }
+    }
+    private suspend fun getWeatherDetail(){
+        val weatherModel = mutableListOf<WeatherForeCast>()
+        for (list in businessesList.businesses){
+            val getWeatherFromDataBase = binding.viewModel?.getWeatherForecastLocal(list.id)
+            if (getWeatherFromDataBase != null){
+                weatherModel.add(getWeatherFromDataBase)
+            }
+            else
+            {
+                val latAndLng = "${list.coordinates.latitude},${list.coordinates.longitude}"
+                val finalList = binding.viewModel?.getWeatherForeCastDetail(latAndLng)
+                finalList?.businessId = list.id
+                if (finalList != null){
+                    weatherModel.add(finalList)
+                    binding.viewModel?.insertWeatherForeCastLocal(finalList)
+                }
+            }
+
+        }
+        withContext(Dispatchers.Main){
+            weatherModelList.addAll(weatherModel)
+        }
     }
 
 

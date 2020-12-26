@@ -16,8 +16,8 @@ import java.util.*
 @Entity
 data class WeatherForeCast (
     @PrimaryKey val id: UUID = UUID.randomUUID(),
-    val businessId:String = "",
+    var businessId:String = "",
     @Embedded  val location : Location = Location(),
     @Embedded val current : Current = Current(),
-    @Embedded  val forecast : Forecast,
+    @Embedded  val forecast : Forecast = Forecast(),
 ):Parcelable

@@ -9,5 +9,5 @@ import java.util.*
 
 @Parcelize
 data class Forecast (
-	@SerializedName("forecastday") val foreCastDay : List<ForeCastDay>
+	@SerializedName("forecastday") val foreCastDay : MutableList<ForeCastDay> = mutableListOf()
 ):Parcelable

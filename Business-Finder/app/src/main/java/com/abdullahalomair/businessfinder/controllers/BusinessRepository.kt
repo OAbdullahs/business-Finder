@@ -6,7 +6,6 @@ import androidx.room.Room
 import com.abdullahalomair.businessfinder.api.weatherapi.weatherfetcher.WeatherFetcher
 import com.abdullahalomair.businessfinder.api.yelpapi.yelpfetcher.YelpFetcher
 import com.abdullahalomair.businessfinder.database.BusinessFinderDataBase
-import com.abdullahalomair.businessfinder.model.wathermodel.WeatherModel
 import com.abdullahalomair.businessfinder.model.wathermodel.forecats.WeatherForeCast
 import com.abdullahalomair.businessfinder.model.yelpmodel.BusinessDetails
 import com.abdullahalomair.businessfinder.model.yelpmodel.BusinessesList
@@ -29,10 +28,7 @@ class BusinessRepository private constructor(context: Context){
     suspend fun getBusinessDetailLocal(businessId: String): BusinessDetails?{
         return dataBaseDao.getBusinessDetails(businessId)
     }
-    suspend fun getWeatherDataLocal(businessId: String): WeatherModel?{
-        return dataBaseDao.getWeatherModel(businessId)
-    }
-    fun getWeatherForecastLocal(businessId: String): LiveData<WeatherForeCast>? {
+    suspend fun getWeatherForecastLocal(businessId: String): WeatherForeCast? {
         return dataBaseDao.getWeatherForeCast(businessId)
     }
 
@@ -45,11 +41,6 @@ class BusinessRepository private constructor(context: Context){
     fun insertBusinessDetailsLocal(businessDetails: BusinessDetails){
         executor.execute {
             dataBaseDao.insertBusinessDetails(businessDetails)
-        }
-    }
-    fun insertWeatherDataLocal(weatherModel: WeatherModel){
-        executor.execute {
-            dataBaseDao.insertWeatherModel(weatherModel)
         }
     }
     fun insertWeatherForeCastLocal(weatherForeCast: WeatherForeCast){
@@ -69,11 +60,6 @@ class BusinessRepository private constructor(context: Context){
             dataBaseDao.deleteBusinessDetails()
         }
     }
-    fun deleteWeatherDataLocal(){
-        executor.execute {
-            dataBaseDao.deleteWeatherModel()
-        }
-    }
     fun deleteWeatherForeCastLocal(){
         executor.execute {
             dataBaseDao.deleteWeatherForeCast()
@@ -85,13 +71,11 @@ class BusinessRepository private constructor(context: Context){
     fun getBusinessList(location:String):LiveData<BusinessesList>{
         return YelpFetcher().getBusinessesByLocation(location)
     }
-    suspend fun getBusinessDetail(businessId: String): BusinessDetails?{
+    suspend fun getBusinessDetail(businessId: String): BusinessDetails{
         return YelpFetcher().getBusinessDetails(businessId)
     }
-    suspend fun getWeatherData(location: String): WeatherModel?{
-        return WeatherFetcher().getWeatherByLocation(location)
-    }
-    fun getWeatherForecast(location: String): LiveData<WeatherForeCast> {
+
+    suspend fun  getWeatherForecast(location: String): WeatherForeCast {
         return WeatherFetcher().getWeatherForeCast(location)
     }
 

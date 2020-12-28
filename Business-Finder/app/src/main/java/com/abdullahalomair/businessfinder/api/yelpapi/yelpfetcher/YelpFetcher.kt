@@ -43,7 +43,7 @@ class YelpFetcher {
                 call: Call<BusinessesList>,
                 response: Response<BusinessesList>
             ) {
-                responseLiveData.value =  response.body() as BusinessesList
+                responseLiveData.value =  response.body()
             }
 
             override fun onFailure(call: Call<BusinessesList>, t: Throwable) {

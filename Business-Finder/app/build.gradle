@@ -40,6 +40,9 @@ android {
 
 dependencies {
 
+    //colorPicker view
+    implementation "com.github.skydoves:colorpickerview:2.2.2"
+
     //Country flags
     implementation "com.github.blongho:worldCountryData:1.4"
     //ShimmerLoader Animation

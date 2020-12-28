@@ -31,31 +31,31 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-                <TextView
-                    android:id="@+id/business_name_text"
-                    android:layout_height="match_parent"
-                    android:layout_width="wrap_content"
-                    android:minWidth="90dp"
-                    android:background="@color/dark_gray"
-                    tools:text="Hi I am a restaurant"
-                    android:layout_marginStart="10dp"
-                    android:layout_marginTop="10dp"
-                    card_view:layout_constraintStart_toStartOf="parent"
-                    card_view:layout_constraintTop_toBottomOf="@+id/images_recyclerview_fragment"/>
+            <TextView
+                android:id="@+id/business_name_text"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="10dp"
+                android:background="@color/dark_gray"
+                android:minWidth="90dp"
+                card_view:layout_constraintStart_toStartOf="parent"
+                card_view:layout_constraintTop_toBottomOf="@+id/restaurant_main_image"
+                tools:text="Hi I am a restaurant" />
 
 
-
-                <TextView
-                    android:id="@+id/business_type_text"
-                    android:layout_width="wrap_content"
-                    android:minWidth="70dp"
-                    android:layout_height="wrap_content"
-                    android:background="@color/dark_gray"
-                    tools:text="restaurant"
-                    android:layout_marginTop="5dp"
-                    card_view:layout_constraintStart_toStartOf="@+id/ratingBar"
-                    card_view:layout_constraintTop_toBottomOf="@+id/ratingBar"
-                    />
+            <TextView
+                android:id="@+id/business_type_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:layout_marginBottom="5dp"
+                android:background="@color/dark_gray"
+                android:minWidth="70dp"
+                card_view:layout_constraintBottom_toBottomOf="parent"
+                card_view:layout_constraintStart_toStartOf="@+id/ratingBar"
+                card_view:layout_constraintTop_toBottomOf="@+id/ratingBar"
+                tools:text="restaurant" />
 
 
             <RatingBar
@@ -72,108 +72,19 @@
                 tools:rating="3" />
 
 
-            <com.facebook.shimmer.ShimmerFrameLayout
-                android:id="@+id/is_open_fragment"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                card_view:layout_constraintBottom_toBottomOf="parent"
-                card_view:layout_constraintStart_toStartOf="@+id/business_type_text"
-                card_view:layout_constraintTop_toBottomOf="@+id/business_type_text">
-                <TextView
-                    android:id="@+id/is_open_text"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:minWidth="50dp"
-                    android:layout_marginTop="5dp"
-                    android:background="@color/dark_gray"
-                    android:layout_marginBottom="5dp"
-                    tools:text="Open" />
-            </com.facebook.shimmer.ShimmerFrameLayout>
-
-
-
-
             <ImageView
                 android:id="@+id/restaurant_main_image"
                 android:layout_width="0dp"
                 android:layout_height="195dp"
-                android:layout_marginStart="10dp"
+                android:layout_marginStart="5dp"
                 android:layout_marginTop="10dp"
+                android:layout_marginEnd="5dp"
                 android:background="@drawable/images_border"
                 android:scaleType="centerCrop"
-                card_view:layout_constraintEnd_toStartOf="@+id/images_recyclerview_fragment"
+                card_view:layout_constraintEnd_toEndOf="parent"
                 card_view:layout_constraintStart_toStartOf="parent"
                 card_view:layout_constraintTop_toTopOf="parent"
                 tools:srcCompat="@tools:sample/avatars" />
-
-            <com.facebook.shimmer.ShimmerFrameLayout
-                android:id="@+id/images_recyclerview_fragment"
-                android:layout_width="80dp"
-                android:layout_height="0dp"
-                card_view:layout_constraintBottom_toBottomOf="@+id/restaurant_main_image"
-                card_view:layout_constraintEnd_toEndOf="parent"
-                card_view:layout_constraintStart_toEndOf="@+id/restaurant_main_image"
-                card_view:layout_constraintTop_toTopOf="@+id/restaurant_main_image">
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:orientation="vertical"
-                    android:weightSum="2"
-                    >
-                    <ImageView
-                        android:id="@+id/image_detail_1"
-                        android:layout_width="match_parent"
-                        android:layout_height="0dp"
-                        android:layout_marginEnd="5dp"
-                        android:scaleType="centerCrop"
-                        android:background="@drawable/images_border"
-                        android:layout_weight="1"/>
-
-                    <ImageView
-                        android:id="@+id/image_detail_2"
-                        android:layout_width="match_parent"
-                        android:layout_height="0dp"
-                        android:layout_marginEnd="5dp"
-                        android:layout_weight="1"
-                        android:background="@drawable/images_border"
-                        android:scaleType="centerCrop" />
-                </LinearLayout>
-            </com.facebook.shimmer.ShimmerFrameLayout>
-
-
-
-
-
-            <ImageView
-                android:id="@+id/weather_image"
-                android:layout_width="55dp"
-                android:layout_height="55dp"
-                android:scaleType="centerCrop"
-                android:layout_marginBottom="5dp"
-                card_view:layout_constraintBottom_toBottomOf="parent"
-                card_view:layout_constraintEnd_toStartOf="@+id/weather_value"
-                card_view:layout_constraintTop_toBottomOf="@+id/restaurant_main_image"
-                card_view:layout_constraintVertical_bias="1.0"
-                tools:srcCompat="@tools:sample/avatars" />
-
-            <com.facebook.shimmer.ShimmerFrameLayout
-                android:id="@+id/weather_value"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                card_view:layout_constraintBottom_toBottomOf="@+id/weather_image"
-                card_view:layout_constraintEnd_toEndOf="parent"
-                card_view:layout_constraintTop_toTopOf="@+id/weather_image">
-                <TextView
-                    android:id="@+id/weather_value_text"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginEnd="5dp"
-                    android:textAlignment="textStart"
-                    android:minWidth="50dp"
-                    android:textSize="19sp"
-                    android:background="@color/dark_gray"
-                    tools:text="Weather value" />
-            </com.facebook.shimmer.ShimmerFrameLayout>
 
 
 

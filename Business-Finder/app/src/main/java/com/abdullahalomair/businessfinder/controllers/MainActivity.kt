@@ -2,6 +2,8 @@ package com.abdullahalomair.businessfinder.controllers
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.Menu
+import android.view.MenuItem
 import androidx.databinding.DataBindingUtil
 import com.abdullahalomair.businessfinder.R
 import com.abdullahalomair.businessfinder.callbacks.CallBacks
@@ -11,6 +13,7 @@ import com.abdullahalomair.businessfinder.model.wathermodel.forecats.ForeCastDay
 import com.abdullahalomair.businessfinder.model.yelpmodel.BusinessDetails
 import com.abdullahalomair.businessfinder.model.yelpmodel.Businesses
 
+private const val PLANS_LIST = "plan_list"
 class MainActivity : AppCompatActivity(), CallBacks {
     private lateinit var mainBinding: ActivityMainBinding
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -30,18 +33,33 @@ class MainActivity : AppCompatActivity(), CallBacks {
 
     }
 
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.plans_menu, menu)
+        return super.onCreateOptionsMenu(menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when(item.itemId){
+            R.id.plans_list_menu_item -> {
+                val plansBottomSheet = PlansBottomSheet()
+                plansBottomSheet.show(this.supportFragmentManager,PLANS_LIST)
+                return true
+            }
+        }
+        return true
+    }
+
     override fun applicationNavigator(
         navigator: Navigator,
         businesses: Businesses?,
-        businessDetails: BusinessDetails?,
         weatherModel: ForeCastDay?,
         cityName: String?
     ) {
         when (navigator) {
             Navigator.BUSINESS_DETAILS -> {
-                if (businesses != null && businessDetails != null) {
+                if (businesses != null) {
                     val newFragment =
-                        BusinessDetailFragment.newInstance(businesses, businessDetails)
+                        BusinessDetailFragment.newInstance(businesses)
                     supportFragmentManager
                         .beginTransaction()
                         .replace(R.id.main_fragment_manager, newFragment)

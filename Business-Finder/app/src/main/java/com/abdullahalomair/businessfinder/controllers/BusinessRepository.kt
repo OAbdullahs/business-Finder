@@ -1,18 +1,21 @@
 package com.abdullahalomair.businessfinder.controllers
 
 import android.content.Context
+import android.net.ConnectivityManager
+import android.net.NetworkInfo
 import androidx.lifecycle.LiveData
 import androidx.room.Room
 import com.abdullahalomair.businessfinder.api.weatherapi.weatherfetcher.WeatherFetcher
 import com.abdullahalomair.businessfinder.api.yelpapi.yelpfetcher.YelpFetcher
 import com.abdullahalomair.businessfinder.database.BusinessFinderDataBase
+import com.abdullahalomair.businessfinder.model.planmodel.PlanModel
 import com.abdullahalomair.businessfinder.model.wathermodel.forecats.WeatherForeCast
 import com.abdullahalomair.businessfinder.model.yelpmodel.BusinessDetails
 import com.abdullahalomair.businessfinder.model.yelpmodel.BusinessesList
 import java.util.concurrent.Executors
 
 private const val DATABASE_NAME = "BusinessFinder-database"
-class BusinessRepository private constructor(context: Context){
+class BusinessRepository private constructor(private val context: Context){
     private val database : BusinessFinderDataBase = Room.databaseBuilder(
         context.applicationContext,
         BusinessFinderDataBase::class.java,
@@ -20,6 +23,15 @@ class BusinessRepository private constructor(context: Context){
     ).build()
     private val dataBaseDao = database.getBusinessFinderDao()
     private val executor = Executors.newSingleThreadExecutor()
+
+    fun hasNetwork(): Boolean {
+        var isConnected = false // Initial Value
+        val connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        val activeNetwork: NetworkInfo? = connectivityManager.activeNetworkInfo
+        if (activeNetwork != null && activeNetwork.isConnected)
+            isConnected = true
+        return isConnected
+    }
 
     //Get data from database
     fun getBusinessListLocal():LiveData<BusinessesList>?{
@@ -30,6 +42,20 @@ class BusinessRepository private constructor(context: Context){
     }
     suspend fun getWeatherForecastLocal(businessId: String): WeatherForeCast? {
         return dataBaseDao.getWeatherForeCast(businessId)
+    }
+
+    fun getPlansList():LiveData<MutableList<PlanModel>>{
+        return dataBaseDao.getPlanDetails()
+    }
+    fun deletePlanDetail(planModel: PlanModel){
+        executor.execute {
+            dataBaseDao.deletePlanDetail(planModel)
+        }
+    }
+    fun insertPlanDetail(planModel: PlanModel){
+        executor.execute {
+            dataBaseDao.insertPlanDetail(planModel)
+        }
     }
 
     //Insert Data to Database

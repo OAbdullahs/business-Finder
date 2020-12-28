@@ -9,30 +9,35 @@ import com.abdullahalomair.businessfinder.model.wathermodel.forecats.WeatherFore
 import com.abdullahalomair.businessfinder.model.yelpmodel.BusinessDetails
 import com.abdullahalomair.businessfinder.model.yelpmodel.BusinessesList
 import com.abdullahalomair.businessfinder.model.yelpmodel.Categories
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
 
 class MainFragmentViewModel(private val context: Context): BaseObservable() {
 
     private val repository = BusinessRepository.get()
 
+    fun hasNetwork():Boolean{
+        return repository.hasNetwork()
+    }
     //Get data from Local
     fun getBusinessListLocal():LiveData<BusinessesList>?{
         return repository.getBusinessListLocal()
     }
-    suspend fun getBusinessDetailLocal(businessId: String): BusinessDetails?{
-        return repository.getBusinessDetailLocal(businessId)
+    private suspend fun getBusinessesDetailsLocal(id:String):BusinessDetails?{
+        return repository.getBusinessDetailLocal(id)
     }
-    suspend fun getWeatherForecastLocal(businessId: String): WeatherForeCast? {
-        return repository.getWeatherForecastLocal(businessId)
+    suspend fun getWeatherForeCastDetailLocal (location: String):WeatherForeCast? {
+        return repository.getWeatherForecastLocal(location)
     }
 
     //Insert Data to Database
     fun insertBusinessListLocal(businessesList: BusinessesList) =
         repository.insertBusinessListLocal(businessesList)
 
-    fun insertBusinessDetailsLocal(businessDetails: BusinessDetails)  =
+    private fun insertBusinessDetailsLocal(businessDetails: BusinessDetails)  =
         repository.insertBusinessDetailsLocal(businessDetails)
-    fun insertWeatherForeCastLocal(weatherForeCast: WeatherForeCast) =
+    private fun insertWeatherForeCastLocal(weatherForeCast: WeatherForeCast) =
         repository.insertWeatherForeCastLocal(weatherForeCast)
 
     //Delete from Database
@@ -48,18 +53,42 @@ class MainFragmentViewModel(private val context: Context): BaseObservable() {
         return repository.getBusinessList(location)
     }
 
-     suspend fun getWeatherForeCastDetail (location: String):WeatherForeCast {
+     private suspend fun getWeatherForeCastDetail (location: String):WeatherForeCast {
         return repository.getWeatherForecast(location)
     }
 
-     suspend fun getBusinessesDetails (businessId:String): BusinessDetails {
-         return repository.getBusinessDetail(businessId) ?: BusinessDetails()
+
+     private suspend fun getBusinessesDetails (businessId:String): BusinessDetails? {
+         return repository.getBusinessDetail(businessId)
+    }
+
+     suspend fun storeBusinessDetails(businessesList: BusinessesList) {
+        for (list in businessesList.businesses){
+            val dataFromDatabase = getBusinessesDetailsLocal(list.id)
+            if (dataFromDatabase == null){
+                val finalList = getBusinessesDetails(list.id)
+                if (finalList != null){
+                    insertBusinessDetailsLocal(finalList)
+                }
+            }
+        }
+    }
+
+     suspend fun storeWeatherForCasts(businessesList: BusinessesList){
+        for (list in businessesList.businesses){
+            val getWeatherFromDataBase = getWeatherForeCastDetailLocal(list.id)
+            if (getWeatherFromDataBase == null) {
+                val latAndLng = "${list.coordinates.latitude},${list.coordinates.longitude}"
+                val finalList = getWeatherForeCastDetail(latAndLng)
+                finalList.businessId = list.id
+                insertWeatherForeCastLocal(finalList)
+
+            }
+        }
     }
 
 
-
-
-     fun  getFinalCategoryData(data: BusinessesList): MutableList<Pair<String, Int>> {
+    fun  getFinalCategoryData(data: BusinessesList): MutableList<Pair<String, Int>> {
         val finalResult:MutableList<Pair<String,Int>>
             //Get Data from Server Then extract what needed
             val dataPairs = getCategoriesPair(data).filter { it.first.isNotBlank() }
@@ -68,10 +97,6 @@ class MainFragmentViewModel(private val context: Context): BaseObservable() {
         return finalResult
 
     }
-
-
-
-
     private  fun finalFilteringResult(catPair: List<Pair<String,Int>>, cat: List<Categories>): MutableList<Pair<String, Int>> {
         val finalResult: MutableList<Pair<String,Int>> = mutableListOf()
         val text:String = context.getString(R.string.all_categories)

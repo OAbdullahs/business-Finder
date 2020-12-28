@@ -27,34 +27,18 @@ class RestaurantHolder(
 
     }
 
-    fun bind(allData: Businesses,
-             businessDetails: BusinessDetails,
-             weatherModel: WeatherForeCast )
+    fun bind(allData: Businesses)
     {
         Glide.with(itemView)
             .load(allData.imageUrl)
             .thumbnail(Glide.with(itemView).load(R.drawable.placeholder))
             .into(binding.restaurantMainImage)
-        try {
-            businessDetail(businessDetails)
-        } catch (e: IOException) {
-            Toast.makeText(itemView.context, e.localizedMessage, Toast.LENGTH_SHORT).show()
-        }
-        try {
-            displayWeatherData(weatherModel)
-        } catch (e: Exception) {
 
-
-        }
 
         itemView.setOnClickListener {
             callback?.applicationNavigator(
                 Navigator.BUSINESS_DETAILS,
-                businesses = allData,
-                businessDetails = businessDetails
-            )
-
-
+                businesses = allData)
         }
 
         binding.apply {
@@ -71,71 +55,6 @@ class RestaurantHolder(
 
         }
 
-
-    }
-
-    private fun displayWeatherData(weatherModel: WeatherForeCast) {
-        binding.apply {
-            val weatherIcon = "https://" + weatherModel.current.condition.icon
-            Glide.with(itemView)
-                .load(weatherIcon)
-                .thumbnail(Glide.with(itemView).load(R.drawable.placeholder))
-                .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
-                .into(binding.weatherImage)
-            val currentWeather = "${weatherModel.current.tempC}${0x00B0.toChar()}C"
-            weatherValueText.apply {
-                if (weatherModel.current.tempC != -20.0) {
-                    text = currentWeather
-                    background = null
-                    binding.weatherValue.hideShimmer()
-                }
-            }
-
-
-        }
-    }
-
-    private fun businessDetail(businessData: BusinessDetails) {
-        try {
-            val isBusinessClosed = if (!businessData.hours.last().isOpenNow) {
-                itemView.context.getString(R.string.business_closed)
-            } else {
-                itemView.context.getString(R.string.business_open)
-            }
-
-            binding.isOpenText.apply {
-                val finalText = if (businessData.price.isEmpty()) {
-                    isBusinessClosed
-                } else {
-                    "$isBusinessClosed . ${businessData.price}"
-                }
-                text = finalText
-                background = null
-                binding.isOpenFragment.hideShimmer()
-            }
-
-
-            try {
-                Glide.with(itemView)
-                    .load(businessData.photos[1])
-                    .thumbnail(Glide.with(itemView).load(R.drawable.placeholder))
-                    .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
-                    .into(binding.imageDetail1)
-            } catch (e: IndexOutOfBoundsException) {
-
-            }
-            try {
-                Glide.with(itemView)
-                    .load(businessData.photos[2])
-                    .thumbnail(Glide.with(itemView).load(R.drawable.placeholder))
-                    .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
-                    .into(binding.imageDetail2)
-                binding.imagesRecyclerviewFragment.hideShimmer()
-            } catch (e: IndexOutOfBoundsException) {
-
-            }
-        } catch (e: NoSuchElementException) {
-        }
 
     }
 

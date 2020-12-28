@@ -8,7 +8,6 @@ import com.abdullahalomair.businessfinder.model.yelpmodel.Businesses
 interface CallBacks {
     fun applicationNavigator(navigator: Navigator,
                              businesses: Businesses? = null,
-                             businessDetails: BusinessDetails? = null,
                              weatherModel: ForeCastDay? = null,
                              cityName: String? = null)
 }

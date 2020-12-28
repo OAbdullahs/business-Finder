@@ -11,5 +11,7 @@
     <color name="transparent_black">#81000000</color>
     <color name="transparent">#00000000</color>
     <color name="gold">#FDCC9900</color>
+    <color name="green">#FD00FF19</color>
+    <color name="transparent_green">#1900FF19</color>
 
 </resources>

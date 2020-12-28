@@ -1,6 +1,5 @@
 package com.abdullahalomair.businessfinder.utils
 
-import android.content.Context
 import android.graphics.drawable.Drawable
 import android.widget.ImageView
 import android.widget.TextView
@@ -9,9 +8,6 @@ import androidx.annotation.RawRes
 import androidx.databinding.BindingAdapter
 import com.airbnb.lottie.LottieAnimationView
 
-fun Int.toDp(context: Context):Int{
-    return (this * context.resources.displayMetrics.density).toInt()
-}
 object Utils {
         @JvmStatic
         @BindingAdapter("lottie_rawRes")
@@ -19,21 +15,23 @@ object Utils {
             if (rawId == 0) return
             view.setAnimation(rawId)
         }
+
         @JvmStatic
         @BindingAdapter("load_image")
         fun setImageViewResource( imageView: ImageView, drawable: Drawable?){
             if (drawable == null) return
             imageView.setImageDrawable(drawable)
         }
-    @JvmStatic
-    @BindingAdapter("android:background")
-    fun setBackgroundForTextView(textView: TextView, @ColorRes color:Int?){
-        if (color == 0) return
-        if (color != null) {
-            textView.setBackgroundResource(color)
-        }else{
-            textView.background = null
+
+        @JvmStatic
+        @BindingAdapter("android:background")
+        fun setBackgroundForTextView(textView: TextView, @ColorRes color:Int?){
+            if (color == 0) return
+            if (color != null) {
+                textView.setBackgroundResource(color)
+            }else{
+                textView.background = null
+            }
         }
-    }
 
 }

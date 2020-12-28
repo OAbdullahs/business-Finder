@@ -7,14 +7,17 @@ import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import android.widget.ArrayAdapter
 import android.widget.TextView
+import android.widget.Toast
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.MutableLiveData
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.LinearSnapHelper
 import androidx.recyclerview.widget.RecyclerView
@@ -32,7 +35,7 @@ import com.blongho.country_data.World
 import com.google.gson.Gson
 import kotlinx.coroutines.*
 
-
+private const val DEFAULT_CITY = "New York"
 private const val CATEGORY_POSITION = "Category_Position"
 private const val ALL_CATEGORY = "All"
 class MainFragment: Fragment() {
@@ -42,9 +45,7 @@ class MainFragment: Fragment() {
     private lateinit var recentAdapter: RestaurantAdapter
     private lateinit var arrayAdapter: ArrayAdapter<String>
     private val scope = CoroutineScope(Dispatchers.IO)
-    private lateinit var businessesList: BusinessesList
-    private val businessDetailsList: MutableList<BusinessDetails> = mutableListOf()
-    private val weatherModelList: MutableList<WeatherForeCast> = mutableListOf()
+    private  var businessesList: BusinessesList = BusinessesList()
     private  var callback: CallBacks? = null
     private var didUserWrite = false
 
@@ -79,16 +80,22 @@ class MainFragment: Fragment() {
         super.onViewCreated(view, savedInstanceState)
             initAutoTextView()
 
-        binding.viewModel?.getBusinessListLocal()?.observe(
-            viewLifecycleOwner,{businessesList ->
-                if (businessesList != null) {
-                    updateUI(businessesList)
-                }else
-                {
-                    updateUIOnline("New York")
+        if (binding.viewModel?.hasNetwork()!!){
+            updateUIOnline(DEFAULT_CITY)
+        }
+        else{
+            binding.viewModel?.getBusinessListLocal()?.observe(
+                viewLifecycleOwner,{businessesList ->
+                    if (businessesList != null) {
+                        updateUI(businessesList)
+                    }else
+                    {
+                        updateUIOnline(DEFAULT_CITY)
+                    }
                 }
-            }
-        )
+            )
+        }
+
 
 
 
@@ -105,7 +112,6 @@ class MainFragment: Fragment() {
                     binding.searchRestaurants.setAdapter(arrayAdapter)
                     binding.searchRestaurants.setOnClickListener {
                         didUserWrite = false
-//                        binding.searchRestaurants.setAdapter(customArrayAdapter(true,getRecentSearched!!.toList()))
                         binding.searchRestaurants.showDropDown()
 
                     }
@@ -217,10 +223,7 @@ class MainFragment: Fragment() {
     private fun updateRecyclerView(business: List<Businesses>){
         binding.recentVisitRecyclerview.apply {
             recentAdapter = RestaurantAdapter(
-                business,
-                weatherModelList,
-               businessDetailsList,
-            )
+                business)
             adapter = recentAdapter
 
         }
@@ -258,7 +261,7 @@ class MainFragment: Fragment() {
             }
         }
     }
-    private  fun getCitiesList(): MutableList<String> {
+    private fun getCitiesList(): MutableList<String> {
         val assetManager:AssetManager = requireContext().assets
         val cities = assetManager.open("cities.json").bufferedReader().use {
             it.readText()
@@ -271,23 +274,37 @@ class MainFragment: Fragment() {
         return mutableList
     }
     private fun updateUIOnline(searchId: String){
-        binding.viewModel?.getBusinessList(searchId)?.observe(
-            viewLifecycleOwner, { businessesData ->
-                binding.viewModel?.deleteWeatherForeCastLocal()
-                addToDatabase(businessesData)
-                updateUI(businessesData)
-            }
-        )
+        if (binding.viewModel?.hasNetwork()!!){
+            binding.viewModel?.getBusinessList(searchId)?.observe(
+                viewLifecycleOwner, { businessesData ->
+                    scope.launch {
+                        storeResultToDatBase(businessesData)
+                    }
+                    addToDatabase(businessesData)
+                    updateUI(businessesData)
+                }
+            )
+        }else{
+            Toast.makeText(requireContext(),
+                requireContext().getText(R.string.connect_to_the_internet),
+            Toast.LENGTH_SHORT).show()
+        }
+
+    }
+    private suspend fun storeResultToDatBase(businessList: BusinessesList){
+         binding.viewModel?.storeBusinessDetails(businessList)
+         binding.viewModel?.storeWeatherForCasts(businessList)
     }
     private fun addToDatabase(businessList: BusinessesList){
         binding.viewModel?.deleteBusinessListLocal()
         binding.viewModel?.insertBusinessListLocal(businessList)
     }
-    private fun updateUI(businessList: BusinessesList){
-        businessesList = businessList
+    private fun updateUI(businessLists: BusinessesList){
+        businessesList = BusinessesList()
+        businessesList = businessLists
         scope.launch {
             val finalCategory =
-                binding.viewModel?.getFinalCategoryData(businessList)?.toList()
+                binding.viewModel?.getFinalCategoryData(businessLists)?.toList()
             withContext(Dispatchers.Main) {
                 binding.categoryRecyclerview.apply {
                     if (finalCategory != null) {
@@ -309,10 +326,9 @@ class MainFragment: Fragment() {
                     binding.categoryProgressBar.visibility = View.GONE
                 }
             }
-            withContext(Dispatchers.IO) { getBusinessDetail() }
-            withContext(Dispatchers.IO) { getWeatherDetail() }
+
         }
-        updateRecyclerView(businessList.businesses)
+        updateRecyclerView(businessLists.businesses)
     }
     private fun updateViewByCategory(categoryName: String){
         if (categoryName == ALL_CATEGORY){
@@ -324,64 +340,30 @@ class MainFragment: Fragment() {
             )
         }
     }
-    private suspend fun getBusinessDetail() {
-        val businessDetails = mutableListOf<BusinessDetails>()
-        for (list in businessesList.businesses){
-            val dataFromDatabase = binding.viewModel?.getBusinessDetailLocal(list.id)
-            if (dataFromDatabase != null){
-                businessDetails.add(dataFromDatabase)
-            }else{
-                val finalList = binding.viewModel?.getBusinessesDetails(list.id)
-                if (finalList != null){
-                    businessDetails.add(finalList)
-                    binding.viewModel?.insertBusinessDetailsLocal(finalList)
-                }
-            }
-
-        }
-        withContext(Dispatchers.Main) {
-            businessDetailsList.addAll(businessDetails)
-        }
-    }
-    private suspend fun getWeatherDetail(){
-        val weatherModel = mutableListOf<WeatherForeCast>()
-        for (list in businessesList.businesses){
-            val getWeatherFromDataBase = binding.viewModel?.getWeatherForecastLocal(list.id)
-            if (getWeatherFromDataBase != null){
-                weatherModel.add(getWeatherFromDataBase)
-            }
-            else
-            {
-                val latAndLng = "${list.coordinates.latitude},${list.coordinates.longitude}"
-                val finalList = binding.viewModel?.getWeatherForeCastDetail(latAndLng)
-                finalList?.businessId = list.id
-                if (finalList != null){
-                    weatherModel.add(finalList)
-                    binding.viewModel?.insertWeatherForeCastLocal(finalList)
-                }
-            }
-
-        }
-        withContext(Dispatchers.Main){
-            weatherModelList.addAll(weatherModel)
-        }
-    }
-
-
 
 
     override fun onStop() {
         super.onStop()
         callback = null
+        businessesList = BusinessesList()
 
+    }
+
+    override fun onResume() {
+        super.onResume()
+        binding?.viewModel?.getBusinessListLocal()?.observe(
+            viewLifecycleOwner,{ data ->
+                businessesList = data
+                updateUI(data)
+
+            }
+        )
     }
 
     override fun onDestroy() {
         super.onDestroy()
         scope.cancel()
     }
-
-
 
     companion object{
         fun newInstance(): MainFragment {

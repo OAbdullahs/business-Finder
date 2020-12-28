@@ -20,7 +20,16 @@ class BusinessFinderTypeConverter {
     fun fromUUID(uuid: UUID?): String? {
         return uuid?.toString()
     }
-
+    @TypeConverter
+    fun fromDate(date: Date?): Long? {
+        return date?.time
+    }
+    @TypeConverter
+    fun toDate(millisSinceEpoch: Long?): Date? {
+        return millisSinceEpoch?.let {
+            Date(it)
+        }
+    }
     @TypeConverter
     fun fromListForCast(listOfForeCastDay: MutableList<ForeCastDay>):String?{
         val type = object: TypeToken<MutableList<ForeCastDay>>() {}.type

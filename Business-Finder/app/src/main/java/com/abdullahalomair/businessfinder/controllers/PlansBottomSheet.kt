@@ -1,5 +1,8 @@
 package com.abdullahalomair.businessfinder.controllers
 
+import android.graphics.Canvas
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -10,6 +13,8 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.abdullahalomair.businessfinder.R
 import com.abdullahalomair.businessfinder.databinding.PlanADayBottomSheetBinding
+import com.abdullahalomair.businessfinder.model.planmodel.PlanModel
+import com.abdullahalomair.businessfinder.utils.SimpleItemTouchCallback
 import com.abdullahalomair.businessfinder.viewmodels.PlansBottomSheetViewModel
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 
@@ -17,6 +22,7 @@ private const val VISIBILITY_GONE = View.GONE
 private const val VISIBILITY_VISIBLE = View.VISIBLE
 class PlansBottomSheet: BottomSheetDialogFragment() {
     private lateinit var binding: PlanADayBottomSheetBinding
+    private lateinit var planModels: List<PlanModel>
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -36,35 +42,17 @@ class PlansBottomSheet: BottomSheetDialogFragment() {
 
         binding.viewModel?.getPlansList()?.observe(
             viewLifecycleOwner, { listPlanModel ->
-                if (listPlanModel.isNotEmpty()) {
+                if (listPlanModel != null) {
+                    planModels = listPlanModel
                     binding.viewModel?.isListEmpty = VISIBILITY_GONE
                     binding.bottomSheetRecyclerView.apply {
                         layoutManager = LinearLayoutManager(requireContext())
-                        adapter = PlansAdapter(listPlanModel)
+                        adapter = PlansAdapter(planModels)
                     }
 
-                    val simpleItemTouchCallback = object : ItemTouchHelper.SimpleCallback(
-                        0,
-                        ItemTouchHelper.RIGHT
-                    ) {
-                        override fun onMove(
-                            recyclerView: RecyclerView,
-                            viewHolder: RecyclerView.ViewHolder,
-                            target: RecyclerView.ViewHolder
-                        ): Boolean {
-                            return false
-                        }
 
-                        override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
-                            val position = viewHolder.absoluteAdapterPosition
-                            binding.viewModel?.deleteAPlan(listPlanModel[position])
-                            listPlanModel.removeAt(position)
-                            binding.bottomSheetRecyclerView.adapter?.notifyItemRemoved(position)
-                        }
+                    val itemTouchHelper = ItemTouchHelper(SimpleItemTouchCallback(::deletePlan))
 
-                    }
-
-                    val itemTouchHelper = ItemTouchHelper(simpleItemTouchCallback)
                     itemTouchHelper.attachToRecyclerView(binding.bottomSheetRecyclerView)
 
                     if (listPlanModel.isEmpty()){
@@ -79,6 +67,9 @@ class PlansBottomSheet: BottomSheetDialogFragment() {
         )
     }
 
+    private fun deletePlan (position:Int){
+        binding.viewModel?.deleteAPlan(planModels[position])
+    }
 
 
 }

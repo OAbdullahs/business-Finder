@@ -8,13 +8,10 @@ import com.abdullahalomair.businessfinder.callbacks.CallBacks
 
 import com.abdullahalomair.businessfinder.databinding.BusinessRecyclerviewBinding
 import com.abdullahalomair.businessfinder.model.navigator.Navigator
-import com.abdullahalomair.businessfinder.model.wathermodel.forecats.WeatherForeCast
-import com.abdullahalomair.businessfinder.model.yelpmodel.BusinessDetails
+
 import com.abdullahalomair.businessfinder.model.yelpmodel.Businesses
 import com.bumptech.glide.Glide
-import com.bumptech.glide.load.engine.DiskCacheStrategy
-import java.io.IOException
-import java.lang.IndexOutOfBoundsException
+import java.lang.Exception
 
 
 class RestaurantHolder(
@@ -36,9 +33,16 @@ class RestaurantHolder(
 
 
         itemView.setOnClickListener {
-            callback?.applicationNavigator(
-                Navigator.BUSINESS_DETAILS,
-                businesses = allData)
+            try {
+                callback?.applicationNavigator(
+                    Navigator.BUSINESS_DETAILS,
+                    businesses = allData
+                )
+            }catch (e:Exception){
+                Toast.makeText(itemView.context,
+                    itemView.context.getText(R.string.navigation_error),
+                    Toast.LENGTH_SHORT).show()
+            }
         }
 
         binding.apply {
@@ -57,6 +61,8 @@ class RestaurantHolder(
 
 
     }
+
+
 
 
 }

@@ -15,7 +15,7 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 
- private const val C_DEGREE    = "℃"
+ private const val C_DEGREE = "℃"
 class PlansHolder(private val binding:ListRecyclerviewBottomSheetBinding)
     :RecyclerView.ViewHolder(binding.root){
 
@@ -40,6 +40,7 @@ class PlansHolder(private val binding:ListRecyclerviewBottomSheetBinding)
 
 
         }
+
 
     private fun isBusinessOpen(business:PlanModel){
             var finalText = "closed"

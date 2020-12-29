@@ -40,6 +40,11 @@ android {
 
 dependencies {
 
+
+    //work maneger
+    implementation "android.arch.work:work-runtime:1.0.1"
+    //RecyclerView Animators
+    implementation 'jp.wasabeef:recyclerview-animators:4.0.1'
     //colorPicker view
     implementation "com.github.skydoves:colorpickerview:2.2.2"
 

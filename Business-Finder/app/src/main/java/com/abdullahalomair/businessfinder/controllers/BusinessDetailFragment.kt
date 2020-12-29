@@ -30,6 +30,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.lang.IllegalArgumentException
 import java.lang.String.format
 import java.util.*
 
@@ -195,9 +196,14 @@ class BusinessDetailFragment : Fragment(), OnMapReadyCallback {
     }
 
     private fun initMapView(savedInstanceState: Bundle?) {
+        try {
+
         binding.googleMapView.apply {
             onCreate(savedInstanceState)
             getMapAsync(this@BusinessDetailFragment)
+        }
+        }catch (e:IllegalArgumentException){
+            Toast.makeText(requireContext(),e.localizedMessage,Toast.LENGTH_SHORT).show()
         }
     }
     private fun initPlanDay(businessData: Businesses, businessDetails: BusinessDetails){
@@ -225,6 +231,8 @@ class BusinessDetailFragment : Fragment(), OnMapReadyCallback {
         }
 
         binding.addPlanButton.setOnClickListener {
+            val dateObject = binding.viewModel?.planDate
+            if (dateObject != null){
             binding.addPlanButton.apply {
                 playAnimation()
                 val handler = Handler()
@@ -241,6 +249,11 @@ class BusinessDetailFragment : Fragment(), OnMapReadyCallback {
                         }
                     }
                 }, 5000)
+            }
+            }else{
+                Toast.makeText(requireContext(),
+                    requireContext().getText(R.string.date_error),
+                    Toast.LENGTH_SHORT).show()
             }
 
         }

@@ -34,7 +34,7 @@ class BusinessRepository private constructor(private val context: Context){
     }
 
     //Get data from database
-    fun getBusinessListLocal():LiveData<BusinessesList>?{
+    fun getBusinessListLocal():LiveData<BusinessesList?>{
         return dataBaseDao.getBusinessList()
     }
     suspend fun getBusinessDetailLocal(businessId: String): BusinessDetails?{
@@ -75,20 +75,13 @@ class BusinessRepository private constructor(private val context: Context){
         }
     }
 
+
+
+
     //Delete from Database
     fun deleteBusinessListLocal(){
         executor.execute {
             dataBaseDao.deleteBusinessList()
-        }
-    }
-    fun deleteBusinessDetailsLocal(){
-        executor.execute {
-            dataBaseDao.deleteBusinessDetails()
-        }
-    }
-    fun deleteWeatherForeCastLocal(){
-        executor.execute {
-            dataBaseDao.deleteWeatherForeCast()
         }
     }
 
@@ -100,10 +93,26 @@ class BusinessRepository private constructor(private val context: Context){
     suspend fun getBusinessDetail(businessId: String): BusinessDetails{
         return YelpFetcher().getBusinessDetails(businessId)
     }
-
     suspend fun  getWeatherForecast(location: String): WeatherForeCast {
         return WeatherFetcher().getWeatherForeCast(location)
     }
+
+
+    //Poll Worker Requests
+    fun getBusinessListPollWorker() =
+        dataBaseDao.getBusinessListPollWorker()
+    fun getBusinessDetailsPollWorker() =
+        dataBaseDao.getBusinessDetailsPollWorker()
+    fun getWeatherForeCastPollWorker() =
+        dataBaseDao.getWeatherForeCastPollWorker()
+    fun updateBusinessDetailsPollWorker(businessDetails: BusinessDetails) =
+        dataBaseDao.updateBusinessDetailsPollWorker(businessDetails)
+    fun updateWeatherForeCastPollWorker(weatherForeCast: WeatherForeCast) =
+        dataBaseDao.updateWeatherForeCastPollWorker(weatherForeCast)
+    fun deleteBusinessDetailsPollWorker(id:String) =
+        dataBaseDao.deleteBusinessDetailsPollWorker(id)
+    fun deleteWeatherForeCastPollWorker(id:String) =
+        dataBaseDao.deleteWeatherForeCastPollWorker(id)
 
     companion object{
             private var INSTANCE: BusinessRepository? = null

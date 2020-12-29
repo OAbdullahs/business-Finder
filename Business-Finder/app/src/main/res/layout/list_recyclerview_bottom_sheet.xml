@@ -33,6 +33,16 @@
                 app:layout_constraintTop_toTopOf="parent"
                 tools:text="PlanDay"/>
 
+            <View
+                android:layout_width="0dp"
+                android:layout_height="2dp"
+                android:layout_marginEnd="3dp"
+                android:layout_marginStart="3dp"
+                android:background="?default_color"
+                app:layout_constraintEnd_toStartOf="@+id/color_view"
+                app:layout_constraintStart_toStartOf="@+id/day_title"
+                app:layout_constraintTop_toBottomOf="@+id/day_title" />
+
             <TextView
                 android:id="@+id/due_date"
                 android:layout_width="wrap_content"
@@ -79,6 +89,8 @@
                 android:layout_height="wrap_content"
                 android:numStars="5"
                 android:rating="4"
+                android:progressTint="@color/gold"
+                android:progressBackgroundTint="@color/gold"
                 android:layout_marginStart="5dp"
                 android:layout_marginTop="5dp"
                 app:layout_constraintStart_toEndOf="@+id/business_image"
@@ -107,27 +119,25 @@
 
             <com.airbnb.lottie.LottieAnimationView
                 android:id="@+id/lottie_animation"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
+                android:layout_width="56dp"
+                android:layout_height="56dp"
                 android:layout_marginEnd="5dp"
-                app:lottie_autoPlay="true"
-                app:lottie_loop="true"
                 android:layout_marginBottom="5dp"
-                app:layout_constraintBottom_toBottomOf="@+id/business_image"
-                app:layout_constraintEnd_toStartOf="@+id/weather_status"
-                app:layout_constraintTop_toTopOf="@+id/business_image"
-                app:layout_constraintVertical_bias="1.0" />
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/color_view"
+                app:lottie_autoPlay="true"
+                app:lottie_loop="true" />
 
             <TextView
                 android:id="@+id/weather_status"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="5dp"
-                app:layout_constraintBottom_toBottomOf="@+id/lottie_animation"
+                android:layout_marginBottom="5dp"
+                android:textSize="20sp"
+                app:layout_constraintBottom_toTopOf="@+id/lottie_animation"
                 app:layout_constraintEnd_toStartOf="@+id/color_view"
-                app:layout_constraintTop_toTopOf="@+id/lottie_animation"
                 tools:text="5.5C" />
-
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </com.google.android.material.card.MaterialCardView>

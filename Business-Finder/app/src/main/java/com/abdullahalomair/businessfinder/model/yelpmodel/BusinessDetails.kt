@@ -13,7 +13,7 @@ private const val PREFIX = "bus_"
 @Parcelize
 @Entity
 data class BusinessDetails (
-    @PrimaryKey val id_uuid:UUID = UUID.randomUUID(),
+    @PrimaryKey var id_uuid:UUID = UUID.randomUUID(),
     var id : String = "",
     var alias : String = "",
     var name : String = "",

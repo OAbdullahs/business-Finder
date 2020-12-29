@@ -38,7 +38,7 @@ class BusinessDetailViewModel(private val context: Context): BaseObservable() {
         return repository.hasNetwork()
     }
 
-    fun insertPlanModel(planModel: PlanModel){
+    private fun insertPlanModel(planModel: PlanModel){
         repository.insertPlanDetail(planModel)
     }
 
@@ -89,9 +89,7 @@ class BusinessDetailViewModel(private val context: Context): BaseObservable() {
             planModel.dueDate = planDate!!
             insertPlanModel(planModel)
         }catch (e:NullPointerException){
-            withContext(Dispatchers.Main){
-                Toast.makeText(context, "Enter the date first", Toast.LENGTH_SHORT).show()
-            }
+
         }
 
 

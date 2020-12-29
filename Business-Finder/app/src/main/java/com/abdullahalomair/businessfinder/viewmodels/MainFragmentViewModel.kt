@@ -21,7 +21,7 @@ class MainFragmentViewModel(private val context: Context): BaseObservable() {
         return repository.hasNetwork()
     }
     //Get data from Local
-    fun getBusinessListLocal():LiveData<BusinessesList>?{
+    fun getBusinessListLocal():LiveData<BusinessesList?>{
         return repository.getBusinessListLocal()
     }
     private suspend fun getBusinessesDetailsLocal(id:String):BusinessDetails?{
@@ -32,8 +32,10 @@ class MainFragmentViewModel(private val context: Context): BaseObservable() {
     }
 
     //Insert Data to Database
-    fun insertBusinessListLocal(businessesList: BusinessesList) =
+    fun insertBusinessListLocal(businessesList: BusinessesList) {
         repository.insertBusinessListLocal(businessesList)
+    }
+
 
     private fun insertBusinessDetailsLocal(businessDetails: BusinessDetails)  =
         repository.insertBusinessDetailsLocal(businessDetails)
@@ -43,10 +45,7 @@ class MainFragmentViewModel(private val context: Context): BaseObservable() {
     //Delete from Database
     fun deleteBusinessListLocal() =
         repository.deleteBusinessListLocal()
-    fun deleteBusinessDetailsLocal() =
-        repository.deleteBusinessDetailsLocal()
-    fun deleteWeatherForeCastLocal() =
-        repository.deleteWeatherForeCastLocal()
+
 
 
       fun getBusinessList(location:String): LiveData<BusinessesList> {

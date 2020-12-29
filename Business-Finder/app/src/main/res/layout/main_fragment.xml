@@ -17,7 +17,9 @@
         android:layout_height="50dp"
         android:layout_marginStart="50dp"
         android:layout_marginEnd="50dp"
+        android:layout_marginTop="5dp"
         android:background="?search_restaurants"
+        android:elevation="10dp"
         android:inputType="textPersonName|textAutoComplete"
         android:drawableStart="?search_icon"
         android:ems="10"
@@ -29,9 +31,10 @@
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/category_recyclerview"
         android:layout_width="0dp"
-        android:layout_height="52dp"
+        android:layout_height="60dp"
         android:layout_marginStart="20dp"
         android:layout_marginEnd="20dp"
+        android:layout_marginTop="5dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/search_restaurants" />

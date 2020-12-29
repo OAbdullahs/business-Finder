@@ -1,10 +1,19 @@
 package com.abdullahalomair.businessfinder
 
+import com.abdullahalomair.businessfinder.model.yelpmodel.Hours
+
 
 const val BUSINESS = "BUSINESS"
 const val WEATHER_MODEL = "WEATHER_MODEL"
 const val BUSINESS_DETAILS = "BUSINESS_DETAILS"
 const val CITY_NAME = "CITY_NAME"
+const val COLOR_NAME = "COLOR_NAME"
+const val DATE_PICKER = "DATE_PICKER"
+const val TIME_PICKER = "TIME_PICKER"
+const val HOURS_LIST = "TIME_PICKER"
+const val COLOR_REQUEST_CODE = 1
+const val DATE_REQUEST_CODE = 2
+const val TIME_REQUEST_CODE = 3
 
 fun getWeatherAnimationName(weatherCode:Int):Int{
     return when(weatherCode){

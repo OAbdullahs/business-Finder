@@ -8,5 +8,5 @@ import java.util.*
 @Entity
 data class BusinessesList (
 	@PrimaryKey var id:UUID = UUID.randomUUID(),
-	val businesses : List<Businesses> = emptyList(),
+	var businesses : MutableList<Businesses> = mutableListOf(),
 )

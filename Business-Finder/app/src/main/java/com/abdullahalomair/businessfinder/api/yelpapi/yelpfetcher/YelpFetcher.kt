@@ -12,6 +12,7 @@ import retrofit2.Response
 
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import java.io.IOException
 
 class YelpFetcher {
 
@@ -25,8 +26,13 @@ class YelpFetcher {
 
     }
 
-    suspend fun getBusinessDetails(businessID:String):BusinessDetails?{
-        return yelpApi.getBusinessesDetails(businessID).body()
+    suspend fun getBusinessDetails(businessID:String):BusinessDetails{
+        return try {
+            yelpApi.getBusinessesDetails(businessID).body() ?: BusinessDetails()
+        }catch (e:IOException){
+            BusinessDetails()
+        }
+
     }
 
      fun  getBusinessesByLocation(location:String): LiveData<BusinessesList> {
@@ -37,11 +43,11 @@ class YelpFetcher {
                 call: Call<BusinessesList>,
                 response: Response<BusinessesList>
             ) {
-                responseLiveData.value =  response.body() as BusinessesList
+                responseLiveData.value =  response.body()
             }
 
             override fun onFailure(call: Call<BusinessesList>, t: Throwable) {
-                throw t
+                responseLiveData.value = BusinessesList()
             }
         })
         return responseLiveData

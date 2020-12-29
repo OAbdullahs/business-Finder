@@ -8,4 +8,14 @@
     <string name="business_unknown">Unknown</string>
     <string name="today_text">TODAY</string>
     <string name="google_maps_key">AIzaSyBgUfC5EcrmsQCbtUHkBBN_VB6XR6DPS6I</string>
+    <string name="add_to_calender">Create a day plan</string>
+    <string name="day_plan_name_hint">Enter Day plan name</string>
+    <string name="start">Start</string>
+    <string name="select_date">Select Date</string>
+    <string name="add_plan">Add plan</string>
+    <string name="add_date">Enter The date first</string>
+    <string name="error_time">Could not fetch time details</string>
+    <string name="connect_to_the_internet">Please connect to the internet</string>
+    <string name="empty_list">You have no plans yet!!</string>
+    <string name="business_details_err">Error fetching business details please try again later</string>
 </resources>

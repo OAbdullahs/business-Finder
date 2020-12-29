@@ -1,5 +1,6 @@
 package com.abdullahalomair.businessfinder.controllers
 
+import android.app.Activity
 import android.content.res.AssetManager
 import android.content.res.Configuration
 import android.graphics.drawable.Drawable
@@ -10,10 +11,13 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.InputMethodManager
 import android.widget.ArrayAdapter
 import android.widget.TextView
+import android.widget.Toast
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.MutableLiveData
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.LinearSnapHelper
 import androidx.recyclerview.widget.RecyclerView
@@ -21,7 +25,7 @@ import com.abdullahalomair.businessfinder.R
 import com.abdullahalomair.businessfinder.callbacks.CallBacks
 import com.abdullahalomair.businessfinder.databinding.MainFragmentBinding
 import com.abdullahalomair.businessfinder.model.localmodel.Cities
-import com.abdullahalomair.businessfinder.model.wathermodel.WeatherModel
+import com.abdullahalomair.businessfinder.model.wathermodel.forecats.WeatherForeCast
 import com.abdullahalomair.businessfinder.model.yelpmodel.BusinessDetails
 import com.abdullahalomair.businessfinder.model.yelpmodel.Businesses
 import com.abdullahalomair.businessfinder.model.yelpmodel.BusinessesList
@@ -31,7 +35,7 @@ import com.blongho.country_data.World
 import com.google.gson.Gson
 import kotlinx.coroutines.*
 
-
+private const val DEFAULT_CITY = "New York"
 private const val CATEGORY_POSITION = "Category_Position"
 private const val ALL_CATEGORY = "All"
 class MainFragment: Fragment() {
@@ -41,7 +45,7 @@ class MainFragment: Fragment() {
     private lateinit var recentAdapter: RestaurantAdapter
     private lateinit var arrayAdapter: ArrayAdapter<String>
     private val scope = CoroutineScope(Dispatchers.IO)
-    private lateinit var businessesList: BusinessesList
+    private  var businessesList: BusinessesList = BusinessesList()
     private  var callback: CallBacks? = null
     private var didUserWrite = false
 
@@ -61,7 +65,6 @@ class MainFragment: Fragment() {
             R.layout.main_fragment,
             container, false
         )
-        binding.categoryProgressBar.visibility = View.GONE
         binding.categoryProgressBar.visibility = View.VISIBLE
         binding.recentVisitRecyclerview.apply {
             layoutManager  = LinearLayoutManager(requireContext())
@@ -76,7 +79,26 @@ class MainFragment: Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
             initAutoTextView()
-        updateUI("New York")
+
+        if (binding.viewModel?.hasNetwork()!!){
+            updateUIOnline(DEFAULT_CITY)
+        }
+        else{
+            binding.viewModel?.getBusinessListLocal()?.observe(
+                viewLifecycleOwner,{businessesList ->
+                    if (businessesList != null) {
+                        updateUI(businessesList)
+                    }else
+                    {
+                        updateUIOnline(DEFAULT_CITY)
+                    }
+                }
+            )
+        }
+
+
+
+
 
     }
 
@@ -84,25 +106,28 @@ class MainFragment: Fragment() {
         scope.launch {
             val getCities = getCitiesList()
             val getRecentSearched = getRecentSearchQueries()
-            val finalResult = mutableListOf<String>()
-            if (getRecentSearched != null){
-                finalResult.addAll(getRecentSearched)
-                finalResult.addAll(getCities)
-            }else{
-                finalResult.addAll(getCities)
-            }
             withContext(Dispatchers.Main){
                 if (getRecentSearched != null) {
                     arrayAdapter = customArrayAdapter(true, getRecentSearched.toList())
                     binding.searchRestaurants.setAdapter(arrayAdapter)
                     binding.searchRestaurants.setOnClickListener {
                         didUserWrite = false
-                        binding.searchRestaurants.setAdapter(customArrayAdapter(true,getRecentSearched!!.toList()))
                         binding.searchRestaurants.showDropDown()
 
                     }
                 }
                 binding.searchRestaurants.addTextChangedListener(autoCompleteTextWatcher(getCities))
+                binding.searchRestaurants.setOnItemClickListener { parent, _, position, _ ->
+                    setRecentSearchQuery(parent.getItemAtPosition(position).toString())
+                    binding.searchRestaurants.text.clear()
+                    updateUIOnline(parent.getItemAtPosition(position).toString())
+                    binding.categoryProgressBar.visibility = View.VISIBLE
+                    binding.categoryRecyclerview.visibility = View.GONE
+                    val imm =
+                        context?.getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager?
+                    imm?.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0)
+
+                }
             }
 
         }
@@ -198,10 +223,7 @@ class MainFragment: Fragment() {
     private fun updateRecyclerView(business: List<Businesses>){
         binding.recentVisitRecyclerview.apply {
             recentAdapter = RestaurantAdapter(
-                business,
-                this@MainFragment::getWeatherDetail,
-                this@MainFragment::getBusinessDetail,
-            )
+                business)
             adapter = recentAdapter
 
         }
@@ -213,7 +235,8 @@ class MainFragment: Fragment() {
     }
     private fun setRecentSearchQuery(query: String) {
         val encryptSharedPreferences = EncryptSharedPreferences.get()
-        val getQueries = encryptSharedPreferences.getStoredQueries()?.toMutableList()
+        val getQueries = getRecentSearchQueries()?.toMutableList()
+
         if (getQueries != null){
             if (getQueries.size == 5){
                  getQueries.removeAt(getQueries.size - 1)
@@ -228,8 +251,17 @@ class MainFragment: Fragment() {
             val firstTime = setOf(query)
             encryptSharedPreferences.setStoredQueries(firstTime)
         }
+        scope.launch {
+            val getRecentSearched = getRecentSearchQueries()?.toList()
+            withContext(Dispatchers.Main) {
+                if (getRecentSearched != null) {
+                    arrayAdapter = customArrayAdapter(true, getRecentSearched.toList())
+                    binding.searchRestaurants.setAdapter(arrayAdapter)
+                }
+            }
+        }
     }
-    private suspend fun getCitiesList(): MutableList<String> {
+    private fun getCitiesList(): MutableList<String> {
         val assetManager:AssetManager = requireContext().assets
         val cities = assetManager.open("cities.json").bufferedReader().use {
             it.readText()
@@ -241,38 +273,62 @@ class MainFragment: Fragment() {
         }
         return mutableList
     }
-    private fun updateUI(searchId: String){
-        binding.viewModel?.getBusinessList(searchId)?.observe(
-            requireActivity(), { businessesData ->
-                businessesList = businessesData
-                scope.launch {
-                    val data =
-                        async { binding.viewModel?.getFinalCategoryData(businessesData)?.toList() }
-                    withContext(Dispatchers.Main) {
-                        binding.categoryRecyclerview.apply {
-                            if (data.await() != null) {
-                                categoryAdapter = CategoryAdapter(
-                                    requireContext(),
-                                    data.await()!!,
-                                    this@MainFragment::updateViewByCategory
-                                )
-                                adapter = categoryAdapter
-                                layoutManager = LinearLayoutManager(
-                                    requireContext(),
-                                    LinearLayoutManager.HORIZONTAL,
-                                    false
-                                )
-                                adapter?.stateRestorationPolicy =
-                                    RecyclerView.Adapter.StateRestorationPolicy.PREVENT_WHEN_EMPTY
-                            }
-                            binding.categoryRecyclerview.visibility = View.VISIBLE
-                            binding.categoryProgressBar.visibility = View.GONE
-                        }
+    private fun updateUIOnline(searchId: String){
+        if (binding.viewModel?.hasNetwork()!!){
+            binding.viewModel?.getBusinessList(searchId)?.observe(
+                viewLifecycleOwner, { businessesData ->
+                    scope.launch {
+                        storeResultToDatBase(businessesData)
                     }
+                    addToDatabase(businessesData)
+                    updateUI(businessesData)
                 }
-                updateRecyclerView(businessesData.businesses)
+            )
+        }else{
+            Toast.makeText(requireContext(),
+                requireContext().getText(R.string.connect_to_the_internet),
+            Toast.LENGTH_SHORT).show()
+        }
+
+    }
+    private suspend fun storeResultToDatBase(businessList: BusinessesList){
+         binding.viewModel?.storeBusinessDetails(businessList)
+         binding.viewModel?.storeWeatherForCasts(businessList)
+    }
+    private fun addToDatabase(businessList: BusinessesList){
+        binding.viewModel?.deleteBusinessListLocal()
+        binding.viewModel?.insertBusinessListLocal(businessList)
+    }
+    private fun updateUI(businessLists: BusinessesList){
+        businessesList = BusinessesList()
+        businessesList = businessLists
+        scope.launch {
+            val finalCategory =
+                binding.viewModel?.getFinalCategoryData(businessLists)?.toList()
+            withContext(Dispatchers.Main) {
+                binding.categoryRecyclerview.apply {
+                    if (finalCategory != null) {
+                        categoryAdapter = CategoryAdapter(
+                            requireContext(),
+                            finalCategory,
+                            this@MainFragment::updateViewByCategory
+                        )
+                        adapter = categoryAdapter
+                        layoutManager = LinearLayoutManager(
+                            requireContext(),
+                            LinearLayoutManager.HORIZONTAL,
+                            false
+                        )
+                        adapter?.stateRestorationPolicy =
+                            RecyclerView.Adapter.StateRestorationPolicy.PREVENT_WHEN_EMPTY
+                    }
+                    binding.categoryRecyclerview.visibility = View.VISIBLE
+                    binding.categoryProgressBar.visibility = View.GONE
+                }
             }
-        )
+
+        }
+        updateRecyclerView(businessLists.businesses)
     }
     private fun updateViewByCategory(categoryName: String){
         if (categoryName == ALL_CATEGORY){
@@ -284,31 +340,30 @@ class MainFragment: Fragment() {
             )
         }
     }
-    private suspend fun getBusinessDetail(businessId: String): BusinessDetails {
-        val finalList = binding.viewModel?.getBusinessesDetails(businessId)
-        return finalList ?: BusinessDetails()
-    }
-
-    private suspend fun getWeatherDetail(location: String):WeatherModel{
-        val finalList = binding.viewModel?.getWeatherDetail(location)
-        return finalList ?: WeatherModel()
-    }
-
-
 
 
     override fun onStop() {
         super.onStop()
         callback = null
+        businessesList = BusinessesList()
 
+    }
+
+    override fun onResume() {
+        super.onResume()
+        binding?.viewModel?.getBusinessListLocal()?.observe(
+            viewLifecycleOwner,{ data ->
+                businessesList = data
+                updateUI(data)
+
+            }
+        )
     }
 
     override fun onDestroy() {
         super.onDestroy()
         scope.cancel()
     }
-
-
 
     companion object{
         fun newInstance(): MainFragment {

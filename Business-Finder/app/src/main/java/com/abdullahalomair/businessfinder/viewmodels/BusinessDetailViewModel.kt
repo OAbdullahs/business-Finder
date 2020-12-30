@@ -30,7 +30,7 @@ import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.random.Random
 
-class BusinessDetailViewModel(private val context: Context): BaseObservable() {
+open class BusinessDetailViewModel(private val context: Context): BaseObservable() {
 
     private val repository = BusinessRepository.get()
 
@@ -138,7 +138,7 @@ class BusinessDetailViewModel(private val context: Context): BaseObservable() {
             )
         }
         else{
-            Toast.makeText(context,"",Toast.LENGTH_SHORT).show()
+
         }
     }
 

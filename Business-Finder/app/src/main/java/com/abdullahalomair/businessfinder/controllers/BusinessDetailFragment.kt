@@ -71,6 +71,7 @@ class BusinessDetailFragment : Fragment(), OnMapReadyCallback {
                     }
                     withContext(Dispatchers.Main){
                         if (businessDetail != null) initSetTexts(businessData, businessDetail)
+                        else initSetTexts(businessData, BusinessDetails())
                     }
                 }
 

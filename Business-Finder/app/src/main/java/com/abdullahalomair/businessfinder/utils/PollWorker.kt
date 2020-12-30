@@ -15,11 +15,12 @@ class PollWorker(context: Context,
         val applicationContext = applicationContext
         BusinessRepository.initialize(applicationContext)
         val repository = BusinessRepository.get()
+        if (repository.hasNetwork()){
+
 
         val photoIdFromList: MutableList<String> = mutableListOf()
         val photoIdBusinessDetail:MutableList<String> = mutableListOf()
         val photoIdWeather:MutableList<String> = mutableListOf()
-
 
         val businessList = repository.getBusinessListPollWorker()
         try {
@@ -28,26 +29,31 @@ class PollWorker(context: Context,
                     photoIdFromList.add(business.id)
                     runBlocking {
                         //Update BusinessDetails every day
-                        val newBusinessDetail = repository.getBusinessDetail(business.id)
-                        val getCurrentBusinessDetail =
-                            repository.getBusinessDetailLocal(business.id)
-                        if (getCurrentBusinessDetail != null) {
-                            newBusinessDetail.id_uuid = getCurrentBusinessDetail.id_uuid
-                            repository.updateBusinessDetailsPollWorker(newBusinessDetail)
-                        } else {
-                            repository.insertBusinessDetailsLocal(newBusinessDetail)
-                        }
-                        //Update WeatherForecast every day
-                        val location =
-                            "${business.coordinates.latitude},${business.coordinates.longitude}"
-                        val newWeatherData = repository.getWeatherForecast(location)
-                        val localWeatherData = repository.getWeatherForecastLocal(business.id)
-                        if (localWeatherData != null) {
-                            newWeatherData.id = localWeatherData.id
-                            newWeatherData.businessId = localWeatherData.businessId
-                            repository.updateWeatherForeCastPollWorker(newWeatherData)
-                        } else {
-                            repository.insertWeatherForeCastLocal(newWeatherData)
+                        try {
+                                val newBusinessDetail = repository.getBusinessDetail(business.id)
+                                val getCurrentBusinessDetail =
+                                    repository.getBusinessDetailLocal(business.id)
+                                if (getCurrentBusinessDetail != null) {
+                                    newBusinessDetail.id_uuid = getCurrentBusinessDetail.id_uuid
+                                    repository.updateBusinessDetailsPollWorker(newBusinessDetail)
+                                } else {
+                                    repository.insertBusinessDetailsLocal(newBusinessDetail)
+                                }
+                                //Update WeatherForecast every day
+                                val location =
+                                    "${business.coordinates.latitude},${business.coordinates.longitude}"
+                                val newWeatherData = repository.getWeatherForecast(location)
+                                val localWeatherData =
+                                    repository.getWeatherForecastLocal(business.id)
+                                if (localWeatherData != null) {
+                                    newWeatherData.id = localWeatherData.id
+                                    newWeatherData.businessId = localWeatherData.businessId
+                                    repository.updateWeatherForeCastPollWorker(newWeatherData)
+                                } else {
+                                    repository.insertWeatherForeCastLocal(newWeatherData)
+                                }
+                        }catch (e:Exception){
+                            return@runBlocking Result.retry()
                         }
                     }
                 }
@@ -97,13 +103,9 @@ class PollWorker(context: Context,
 
             }
         }catch (e:Exception){
-            try {
-                Log.i(TAG, e.localizedMessage)
-            }catch (e:Exception){
-                Log.i(TAG, e.localizedMessage)
-            }
+           return Result.failure()
         }
-
+        }
         return Result.success()
 
     }

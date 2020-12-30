@@ -8,7 +8,11 @@ plugins {
 android {
     compileSdkVersion 30
     buildToolsVersion "30.0.2"
-
+    testOptions {
+        unitTests {
+            includeAndroidResources = true
+        }
+    }
     defaultConfig {
         applicationId "com.abdullahalomair.businessfinder"
         minSdkVersion 21
@@ -90,6 +94,14 @@ dependencies {
     implementation 'androidx.room:room-ktx:2.2.6'
     kapt "androidx.room:room-compiler:2.2.6"
 
+    //Robolectric tests
+    testImplementation 'org.robolectric:robolectric:4.2.1'
+    //Mockito Test
+    testImplementation "org.mockito:mockito-core:2.25.0"
+    //Test Work Manager
+//    androidTestImplementation "androidx.work:work-testing:2.4.0"
+
+
 
 
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
@@ -97,7 +109,7 @@ dependencies {
     implementation 'androidx.appcompat:appcompat:1.2.0'
     implementation 'com.google.android.material:material:1.2.1'
     implementation 'androidx.constraintlayout:constraintlayout:2.0.4'
-    testImplementation 'junit:junit:4.+'
+    testImplementation 'junit:junit:4.13.1'
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
 }

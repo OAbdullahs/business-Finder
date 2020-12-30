@@ -13,6 +13,8 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.abdullahalomair.businessfinder.*
 import com.abdullahalomair.businessfinder.callbacks.CallBacks
 import com.abdullahalomair.businessfinder.databinding.BusinessDetailsBinding
@@ -35,8 +37,10 @@ import java.lang.String.format
 import java.util.*
 
 private const val UPPER_ARROW = "↑"
-private const val DOWN_ARROW  = "↓"
-private const val C_DEGREE    = "℃"
+private const val DOWN_ARROW = "↓"
+private const val C_DEGREE = "℃"
+private const val TIME_DETAIL = "TimeDetailBottomSheet"
+
 class BusinessDetailFragment : Fragment(), OnMapReadyCallback {
     private lateinit var binding: BusinessDetailsBinding
     private val scope = CoroutineScope(Dispatchers.IO)
@@ -62,14 +66,13 @@ class BusinessDetailFragment : Fragment(), OnMapReadyCallback {
         if (businessData != null) {
             scope.launch {
                 val hasNetwork = binding.viewModel?.hasNetwork()
-                if (hasNetwork != null){
-                    val businessDetail = if (hasNetwork){
+                if (hasNetwork != null) {
+                    val businessDetail = if (hasNetwork) {
                         binding.viewModel?.getBusinessDetails(businessData.id)
-                    }
-                    else {
+                    } else {
                         binding.viewModel?.getBusinessDetailsLocal(businessData.id)
                     }
-                    withContext(Dispatchers.Main){
+                    withContext(Dispatchers.Main) {
                         if (businessDetail != null) initSetTexts(businessData, businessDetail)
                         else initSetTexts(businessData, BusinessDetails())
                     }
@@ -80,13 +83,29 @@ class BusinessDetailFragment : Fragment(), OnMapReadyCallback {
     }
 
 
-
-    private fun initSetTexts(businessData: Businesses, businessDetails: BusinessDetails){
+    private fun initSetTexts(businessData: Businesses, businessDetails: BusinessDetails) {
         initPlanDay(businessData, businessDetails)
-            initSetTextsFinal(businessData, businessDetails)
+        initSetTextsFinal(businessData, businessDetails)
     }
 
     private fun initSetTextsFinal(businessData: Businesses, businessDetails: BusinessDetails) {
+
+
+        binding.timeDetail.setOnClickListener {
+            try {
+
+                val timeDetailSheet =
+                    TimeDetailBottomSheet.newInstance(businessDetails.hours[0])
+                timeDetailSheet.show(requireActivity().supportFragmentManager, TIME_DETAIL)
+            } catch (e: Exception) {
+            Toast.makeText(requireContext(),
+                requireContext().getText(R.string.connect_to_the_internet),
+                Toast.LENGTH_SHORT
+            ).show()
+            }
+        }
+
+
         binding.apply {
             scope.launch {
                 val getImageDrawable = Glide
@@ -103,11 +122,12 @@ class BusinessDetailFragment : Fragment(), OnMapReadyCallback {
                     initWeatherForeCast(latAndLng, businessData.id)
                     viewModel?.imageDrawable = getImageDrawable
                     viewModel?.businessTitle = businessData.name
-                        viewModel?.businessAlias = businessData.categories.last().title
+                    viewModel?.businessAlias = businessData.categories.last().title
                     viewModel?.businessRatings = businessData.rating.toFloat()
                     try {
-                    viewModel?.isBusinessOpen = setOpenText(businessDetails.hours.last().isOpenNow)
-                    }catch (e: Exception){
+                        viewModel?.isBusinessOpen =
+                            setOpenText(businessDetails.hours.last().isOpenNow)
+                    } catch (e: Exception) {
                         Toast.makeText(
                             requireContext(),
                             requireContext().getText(R.string.error_time),
@@ -128,32 +148,30 @@ class BusinessDetailFragment : Fragment(), OnMapReadyCallback {
     }
 
 
-
     private fun initWeatherForeCast(location: String, businessId: String) {
         val hasNetwork = binding.viewModel?.hasNetwork()
-        if (hasNetwork != null){
-
-                scope.launch {
-                    val weatherForeCast:WeatherForeCast? = if (hasNetwork) {
-                        binding.viewModel?.getWeatherForecast(location, businessId)
-                    }else {
-                        binding.viewModel?.getWeatherForecastLocal(businessId)
-                    }
-                    withContext(Dispatchers.Main){
-                        setWeatherDetails(weatherForeCast)
-                    }
+        if (hasNetwork != null) {
+            scope.launch {
+                val weatherForeCast: WeatherForeCast? = if (hasNetwork) {
+                    binding.viewModel?.getWeatherForecast(location, businessId)
+                } else {
+                    binding.viewModel?.getWeatherForecastLocal(businessId)
                 }
+                withContext(Dispatchers.Main) {
+                    setWeatherDetails(weatherForeCast)
+                }
+            }
         }
 
 
     }
 
-    private fun setWeatherDetails(weatherForeCast: WeatherForeCast?){
-        if (weatherForeCast != null){
+    private fun setWeatherDetails(weatherForeCast: WeatherForeCast?) {
+        if (weatherForeCast != null) {
             binding.weatherShimmerFragment.hideShimmer()
             binding.apply {
                 viewModel?.weatherForeCastModel = weatherForeCast.forecast.foreCastDay
-                viewModel?.cityName =  weatherForeCast.location.name
+                viewModel?.cityName = weatherForeCast.location.name
                 //Current Weather Data
                 viewModel?.businessCityName = weatherForeCast.location.name
                 viewModel?.businessCountyName = weatherForeCast.location.country
@@ -161,37 +179,28 @@ class BusinessDetailFragment : Fragment(), OnMapReadyCallback {
                 val weatherIconRawRes =
                     getWeatherAnimationName(weatherForeCast.current.condition.code)
                 viewModel?.currentWeatherIcon = weatherIconRawRes
-                val maxDegree = weatherForeCast.forecast.foreCastDay[0].day.maxTemp_c
-                val minDegree = weatherForeCast.forecast.foreCastDay[0].day.minTemp_c
-                val finalTextAvg =
-                    "$maxDegree$C_DEGREE $UPPER_ARROW $minDegree$C_DEGREE $DOWN_ARROW"
-                viewModel?.averageWeather = finalTextAvg
-                viewModel?.currentDate = weatherForeCast.forecast.foreCastDay[0].date
-                //Second Day Weather Data
-                val secondWeatherIconRawRes =
-                    getWeatherAnimationName(weatherForeCast.forecast.foreCastDay[1].day.condition.code)
-                val secondDayTemp =
-                    "${weatherForeCast.forecast.foreCastDay[1].day.avgTemp_c}$C_DEGREE"
-                val secondDayMaxAndMinDegrees =
-                    "${weatherForeCast.forecast.foreCastDay[1].day.maxTemp_c}$C_DEGREE$UPPER_ARROW " +
-                            "${weatherForeCast.forecast.foreCastDay[1].day.minTemp_c}$C_DEGREE$DOWN_ARROW"
-                viewModel?.secondDayWeatherIcon = secondWeatherIconRawRes
-                viewModel?.secondDayWeatherDegree = secondDayTemp
-                viewModel?.secondDayWeatherAvg = secondDayMaxAndMinDegrees
-                viewModel?.secondDayDate = weatherForeCast.forecast.foreCastDay[1].date
 
-                //Second Day Weather Data
-                val thirdWeatherIconRawRes =
-                    getWeatherAnimationName(weatherForeCast.forecast.foreCastDay[2].day.condition.code)
-                val thirdDayTemp =
-                    "${weatherForeCast.forecast.foreCastDay[2].day.avgTemp_c}$C_DEGREE"
-                val thirdDayMaxAndMinDegrees =
-                    "${weatherForeCast.forecast.foreCastDay[2].day.maxTemp_c}$C_DEGREE$UPPER_ARROW " +
-                            "${weatherForeCast.forecast.foreCastDay[2].day.minTemp_c}$C_DEGREE$DOWN_ARROW"
-                viewModel?.thirdDayWeatherIcon = thirdWeatherIconRawRes
-                viewModel?.thirdDayWeatherDegree = thirdDayTemp
-                viewModel?.thirdDayWeatherAvg = thirdDayMaxAndMinDegrees
-                viewModel?.thirdDayDate = weatherForeCast.forecast.foreCastDay[2].date
+                try {
+                    val maxDegree = weatherForeCast.forecast.foreCastDay[0].day.maxTemp_c
+                    val minDegree = weatherForeCast.forecast.foreCastDay[0].day.minTemp_c
+                    val finalTextAvg =
+                        "$maxDegree$C_DEGREE$UPPER_ARROW $minDegree$C_DEGREE$DOWN_ARROW"
+                    viewModel?.averageWeather = finalTextAvg
+                } catch (e: Exception) {
+                    viewModel?.averageWeather = requireContext().getString(R.string.error_weather)
+                }
+
+                binding.generalWeatherRecyclerview.apply {
+                    layoutManager = GridLayoutManager(
+                        requireContext(), 3,
+                        LinearLayoutManager.VERTICAL,
+                        false
+                    )
+                    adapter = GeneralWeatherAdapter(
+                        weatherForeCast.forecast.foreCastDay,
+                        weatherForeCast.location.name
+                    )
+                }
             }
         }
     }
@@ -199,15 +208,16 @@ class BusinessDetailFragment : Fragment(), OnMapReadyCallback {
     private fun initMapView(savedInstanceState: Bundle?) {
         try {
 
-        binding.googleMapView.apply {
-            onCreate(savedInstanceState)
-            getMapAsync(this@BusinessDetailFragment)
-        }
-        }catch (e:IllegalArgumentException){
-            Toast.makeText(requireContext(),e.localizedMessage,Toast.LENGTH_SHORT).show()
+            binding.googleMapView.apply {
+                onCreate(savedInstanceState)
+                getMapAsync(this@BusinessDetailFragment)
+            }
+        } catch (e: IllegalArgumentException) {
+            Toast.makeText(requireContext(), e.localizedMessage, Toast.LENGTH_SHORT).show()
         }
     }
-    private fun initPlanDay(businessData: Businesses, businessDetails: BusinessDetails){
+
+    private fun initPlanDay(businessData: Businesses, businessDetails: BusinessDetails) {
         binding.colorPicker.setOnClickListener {
             val colorDialogFragment = ColorPickerDialogFragment()
             colorDialogFragment.setTargetFragment(this, COLOR_REQUEST_CODE)
@@ -218,7 +228,7 @@ class BusinessDetailFragment : Fragment(), OnMapReadyCallback {
             try {
                 val intent = Intent(Intent.ACTION_DIAL, Uri.parse("tel:" + businessData.phone))
                 startActivity(intent)
-            }catch (e:Exception){
+            } catch (e: Exception) {
 
             }
         }
@@ -233,28 +243,31 @@ class BusinessDetailFragment : Fragment(), OnMapReadyCallback {
 
         binding.addPlanButton.setOnClickListener {
             val dateObject = binding.viewModel?.planDate
-            if (dateObject != null){
-            binding.addPlanButton.apply {
-                playAnimation()
-                val handler = Handler()
-                handler.postDelayed(
-                    {
-                    scope.launch {
-                        binding.viewModel?.addPlanToDataBase(
-                            businessData,
-                            businessData.id, binding.planTitleEditTex.text.toString()
-                        )
-                        withContext(Dispatchers.Main){
-                            val bottomSheet = PlansBottomSheet()
-                            bottomSheet.show(requireActivity().supportFragmentManager, "")
-                        }
-                    }
-                }, 5000)
-            }
-            }else{
-                Toast.makeText(requireContext(),
+            if (dateObject != null) {
+                binding.addPlanButton.apply {
+                    playAnimation()
+                    val handler = Handler()
+                    handler.postDelayed(
+                        {
+                            scope.launch {
+                                binding.viewModel?.addPlanToDataBase(
+                                    businessData,
+                                    businessData.id, binding.planTitleEditTex.text.toString()
+                                )
+                                withContext(Dispatchers.Main) {
+                                    val bottomSheet = PlansBottomSheet()
+                                    bottomSheet.show(requireActivity().supportFragmentManager, "")
+                                }
+                            }
+                        }, 5000
+                    )
+                }
+            } else {
+                Toast.makeText(
+                    requireContext(),
                     requireContext().getText(R.string.date_error),
-                    Toast.LENGTH_SHORT).show()
+                    Toast.LENGTH_SHORT
+                ).show()
             }
 
         }
@@ -287,7 +300,7 @@ class BusinessDetailFragment : Fragment(), OnMapReadyCallback {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        when(requestCode){
+        when (requestCode) {
             COLOR_REQUEST_CODE -> {
                 if (resultCode == Activity.RESULT_OK) {
                     if (data?.extras?.containsKey(COLOR_NAME) == true) {

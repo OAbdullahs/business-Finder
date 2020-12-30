@@ -16,6 +16,7 @@ import androidx.lifecycle.LiveData
 import com.abdullahalomair.businessfinder.R
 import com.abdullahalomair.businessfinder.callbacks.CallBacks
 import com.abdullahalomair.businessfinder.controllers.BusinessRepository
+import com.abdullahalomair.businessfinder.controllers.TimeDetailBottomSheet
 import com.abdullahalomair.businessfinder.model.navigator.Navigator
 import com.abdullahalomair.businessfinder.model.planmodel.PlanModel
 import com.abdullahalomair.businessfinder.model.wathermodel.forecats.ForeCastDay
@@ -25,12 +26,26 @@ import com.abdullahalomair.businessfinder.model.yelpmodel.Businesses
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.io.IOException
+import java.lang.Exception
 import java.lang.NullPointerException
 import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.random.Random
 
 open class BusinessDetailViewModel(private val context: Context): BaseObservable() {
+
+
+    private var businessDetails: BusinessDetails? = null
+    private var callBacks: CallBacks? = null
+    @ColorRes var textViewBackgroundColor: Int? = R.color.dark_gray
+        set(value) {
+            field = value
+            notifyChange()
+        }
+    init {
+        callBacks = context as CallBacks
+        textViewBackgroundColor =  R.color.dark_gray
+    }
 
     private val repository = BusinessRepository.get()
 
@@ -41,7 +56,6 @@ open class BusinessDetailViewModel(private val context: Context): BaseObservable
     private fun insertPlanModel(planModel: PlanModel){
         repository.insertPlanDetail(planModel)
     }
-
 
     suspend fun getWeatherForecastLocal(id: String): WeatherForeCast? {
         return repository.getWeatherForecastLocal(id)
@@ -98,49 +112,13 @@ open class BusinessDetailViewModel(private val context: Context): BaseObservable
 
 
 
-    private var callBacks: CallBacks? = null
-    @ColorRes var textViewBackgroundColor: Int? = R.color.dark_gray
-            set(value) {
-                field = value
-                notifyChange()
-            }
 
-    init {
-        callBacks = context as CallBacks
-        textViewBackgroundColor =  R.color.dark_gray
-    }
 
 
     var weatherForeCastModel:List<ForeCastDay>? = null
     var cityName:String? = null
 
 
-     fun goToCurrentWeatherDetail(){
-        goToWeatherDetail(0)
-    }
-
-    fun goToSecondWeatherDetail(){
-        goToWeatherDetail(1)
-
-    }
-
-    fun goToThirdWeatherDetail(){
-        goToWeatherDetail(2)
-
-    }
-
-    private fun goToWeatherDetail(dayNumber:Int){
-        if (cityName != null && weatherForeCastModel != null) {
-            callBacks?.applicationNavigator(
-                Navigator.WEATHER_DETAIL,
-                cityName = cityName,
-                weatherModel = weatherForeCastModel!![dayNumber]
-            )
-        }
-        else{
-
-        }
-    }
 
 
 
@@ -193,62 +171,24 @@ open class BusinessDetailViewModel(private val context: Context): BaseObservable
             field = value
             notifyChange()
         }
-    var currentDate:String? = null
-        set(value) {
-            field = value
-            notifyChange()
-        }
+
     var currentWeather:String? = null
         set(value) {
             field = value
             notifyChange()
+            textViewBackgroundColor = null
         }
     var averageWeather:String? = null
         set(value) {
             field = value
             notifyChange()
         }
-    @RawRes var secondDayWeatherIcon:Int? = null
+    @RawRes var timeDetail:Int? = null
         set(value) {
             field = value
             notifyChange()
         }
-    var secondDayDate:String? = null
-        set(value) {
-            field = value
-            notifyChange()
-        }
-    var secondDayWeatherDegree:String? = null
-        set(value) {
-            field = value
-            notifyChange()
-        }
-    var secondDayWeatherAvg:String? = null
-        set(value) {
-            field = value
-            notifyChange()
-        }
-    @RawRes var thirdDayWeatherIcon:Int? = null
-        set(value) {
-            field = value
-            notifyChange()
-        }
-    var thirdDayDate:String? = null
-        set(value) {
-            field = value
-            notifyChange()
-        }
-    var thirdDayWeatherDegree:String? = null
-        set(value) {
-            field = value
-            notifyChange()
-        }
-    var thirdDayWeatherAvg:String? = null
-        set(value) {
-            field = value
-            notifyChange()
-            textViewBackgroundColor = null
-        }
+
 
      var randomColor:Int? = Color.argb(255,Random.nextInt(255),Random.nextInt(255),Random.nextInt(255))
          set(value) {
@@ -269,9 +209,7 @@ open class BusinessDetailViewModel(private val context: Context): BaseObservable
     }
 
 
-    override fun removeOnPropertyChangedCallback(callback: Observable.OnPropertyChangedCallback) {
-        super.removeOnPropertyChangedCallback(callback)
-        callBacks = null
-    }
+
+
 
 }

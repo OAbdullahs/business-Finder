@@ -115,6 +115,18 @@
                     app:layout_constraintTop_toTopOf="@+id/is_business_open"
                     tools:text=" . $$" />
 
+                <com.airbnb.lottie.LottieAnimationView
+                    android:id="@+id/time_detail"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:layout_marginEnd="5dp"
+                    android:layout_marginBottom="5dp"
+                    app:lottie_rawRes="@raw/time_animation"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:lottie_autoPlay="true"
+                    app:lottie_loop="true"
+                     />
 
 
             </androidx.constraintlayout.widget.ConstraintLayout>
@@ -257,230 +269,10 @@
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent">
 
-                    <androidx.cardview.widget.CardView
-                        android:id="@+id/current_day_cardView"
-                        android:layout_width="0dp"
-                        android:layout_height="match_parent"
-                        android:layout_margin="5dp"
-                        android:onClick="@{() ->viewModel.goToCurrentWeatherDetail()}"
-                        android:layout_weight="1">
-
-                        <androidx.constraintlayout.widget.ConstraintLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent">
-
-                            <TextView
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:layout_margin="5dp"
-                                android:gravity="center"
-                                android:text="@{viewModel.currentDate}"
-                                android:textStyle="bold"
-                                android:background="@{viewModel.textViewBackgroundColor}"
-                                app:layout_constraintEnd_toEndOf="parent"
-                                app:layout_constraintStart_toStartOf="parent"
-                                app:layout_constraintTop_toTopOf="parent">
-
-                            </TextView>
-
-                            <com.airbnb.lottie.LottieAnimationView
-                                android:id="@+id/lottieAnimationView0"
-                                android:layout_width="48dp"
-                                android:layout_height="48dp"
-                                android:layout_marginStart="5dp"
-                                android:scaleType="fitCenter"
-                                app:layout_constraintBottom_toBottomOf="parent"
-                                app:layout_constraintStart_toStartOf="parent"
-                                app:layout_constraintTop_toTopOf="parent"
-                                app:lottie_autoPlay="true"
-                                app:lottie_loop="true"
-                                app:lottie_rawRes="@{viewModel.currentWeatherIcon}"
-                                tools:src="@drawable/images_border" />
-
-                            <View
-                                android:id="@+id/view0"
-                                android:layout_width="2dp"
-                                android:layout_height="45dp"
-                                android:background="?default_color"
-                                app:layout_constraintBottom_toBottomOf="@+id/lottieAnimationView0"
-                                app:layout_constraintStart_toEndOf="@+id/lottieAnimationView0"
-                                app:layout_constraintTop_toTopOf="@+id/lottieAnimationView0" />
-
-                            <TextView
-                                android:layout_width="50dp"
-                                android:layout_height="0dp"
-                                android:gravity="center"
-                                android:background="@{viewModel.textViewBackgroundColor}"
-                                android:text="@{viewModel.currentWeather}"
-                                app:layout_constraintBottom_toBottomOf="@+id/lottieAnimationView0"
-                                app:layout_constraintStart_toEndOf="@+id/lottieAnimationView0"
-                                app:layout_constraintTop_toTopOf="@+id/lottieAnimationView0" />
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_marginEnd="5dp"
-                                android:layout_marginBottom="5dp"
-                                android:background="@{viewModel.textViewBackgroundColor}"
-                                android:text="@{viewModel.averageWeather}"
-                                app:layout_constraintBottom_toBottomOf="parent"
-                                app:layout_constraintEnd_toEndOf="parent"
-                                app:layout_constraintHorizontal_bias="1.0"
-                                app:layout_constraintStart_toStartOf="parent"
-                                tools:text="Hello" />
-                        </androidx.constraintlayout.widget.ConstraintLayout>
-
-                    </androidx.cardview.widget.CardView>
-
-                    <androidx.cardview.widget.CardView
-                        android:id="@+id/second_day_cardView"
-                        android:layout_width="0dp"
-                        android:layout_height="match_parent"
-                        android:layout_margin="5dp"
-                        android:onClick="@{() ->viewModel.goToSecondWeatherDetail()}"
-                        android:layout_weight="1">
-
-                        <androidx.constraintlayout.widget.ConstraintLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent">
-
-                            <TextView
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:layout_margin="5dp"
-                                android:gravity="center"
-                                android:background="@{viewModel.textViewBackgroundColor}"
-                                android:text="@{viewModel.secondDayDate}"
-                                android:textStyle="bold"
-                                app:layout_constraintEnd_toEndOf="parent"
-                                app:layout_constraintStart_toStartOf="parent"
-                                app:layout_constraintTop_toTopOf="parent">
-
-                            </TextView>
-
-                            <com.airbnb.lottie.LottieAnimationView
-                                android:id="@+id/lottieAnimationView1"
-                                android:layout_width="48dp"
-                                android:layout_height="48dp"
-                                android:layout_marginStart="5dp"
-                                android:scaleType="fitCenter"
-                                app:layout_constraintBottom_toBottomOf="parent"
-                                app:layout_constraintStart_toStartOf="parent"
-                                app:layout_constraintTop_toTopOf="parent"
-                                app:lottie_autoPlay="true"
-                                app:lottie_loop="true"
-                                app:lottie_rawRes="@{viewModel.secondDayWeatherIcon}"
-                                tools:src="@drawable/images_border" />
-
-                            <View
-                                android:id="@+id/view1"
-                                android:layout_width="2dp"
-                                android:layout_height="45dp"
-                                android:background="?default_color"
-                                app:layout_constraintBottom_toBottomOf="@+id/lottieAnimationView1"
-                                app:layout_constraintStart_toEndOf="@+id/lottieAnimationView1"
-                                app:layout_constraintTop_toTopOf="@+id/lottieAnimationView1" />
-
-                            <TextView
-                                android:layout_width="50dp"
-                                android:layout_height="0dp"
-                                android:gravity="center"
-                                android:background="@{viewModel.textViewBackgroundColor}"
-                                android:text="@{viewModel.secondDayWeatherDegree}"
-                                app:layout_constraintBottom_toBottomOf="@+id/lottieAnimationView1"
-                                app:layout_constraintStart_toEndOf="@+id/lottieAnimationView1"
-                                app:layout_constraintTop_toTopOf="@+id/lottieAnimationView1" />
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_marginEnd="5dp"
-                                android:layout_marginBottom="5dp"
-                                android:background="@{viewModel.textViewBackgroundColor}"
-                                android:text="@{viewModel.secondDayWeatherAvg}"
-                                app:layout_constraintBottom_toBottomOf="parent"
-                                app:layout_constraintEnd_toEndOf="parent"
-                                app:layout_constraintHorizontal_bias="1.0"
-                                app:layout_constraintStart_toStartOf="parent"
-                                tools:text="Hello" />
-                        </androidx.constraintlayout.widget.ConstraintLayout>
-
-                    </androidx.cardview.widget.CardView>
-
-                    <androidx.cardview.widget.CardView
-                        android:id="@+id/third_day_cardView"
-                        android:layout_width="0dp"
-                        android:onClick="@{() ->viewModel.goToThirdWeatherDetail()}"
-                        android:layout_height="match_parent"
-                        android:layout_margin="5dp"
-                        android:layout_weight="1">
-
-                        <androidx.constraintlayout.widget.ConstraintLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent">
-
-                            <TextView
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:layout_margin="5dp"
-                                android:gravity="center"
-                                android:background="@{viewModel.textViewBackgroundColor}"
-                                android:text="@{viewModel.thirdDayDate}"
-                                android:textStyle="bold"
-                                app:layout_constraintEnd_toEndOf="parent"
-                                app:layout_constraintStart_toStartOf="parent"
-                                app:layout_constraintTop_toTopOf="parent">
-
-                            </TextView>
-
-                            <com.airbnb.lottie.LottieAnimationView
-                                android:id="@+id/lottieAnimationView"
-                                android:layout_width="48dp"
-                                android:layout_height="48dp"
-                                android:layout_marginStart="5dp"
-                                android:scaleType="centerCrop"
-                                app:layout_constraintBottom_toBottomOf="parent"
-                                app:layout_constraintStart_toStartOf="parent"
-                                app:layout_constraintTop_toTopOf="parent"
-                                app:lottie_autoPlay="true"
-                                app:lottie_loop="true"
-                                app:lottie_rawRes="@{viewModel.thirdDayWeatherIcon}"
-                                tools:src="@drawable/images_border" />
-
-                            <View
-                                android:id="@+id/view"
-                                android:layout_width="2dp"
-                                android:layout_height="45dp"
-                                android:background="?default_color"
-                                app:layout_constraintBottom_toBottomOf="@+id/lottieAnimationView"
-                                app:layout_constraintStart_toEndOf="@+id/lottieAnimationView"
-                                app:layout_constraintTop_toTopOf="@+id/lottieAnimationView" />
-
-                            <TextView
-                                android:layout_width="50dp"
-                                android:layout_height="0dp"
-                                android:gravity="center"
-                                android:background="@{viewModel.textViewBackgroundColor}"
-                                android:text="@{viewModel.thirdDayWeatherDegree}"
-                                app:layout_constraintBottom_toBottomOf="@+id/lottieAnimationView"
-                                app:layout_constraintStart_toEndOf="@+id/lottieAnimationView"
-                                app:layout_constraintTop_toTopOf="@+id/lottieAnimationView" />
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_marginEnd="5dp"
-                                android:layout_marginBottom="5dp"
-                                android:background="@{viewModel.textViewBackgroundColor}"
-                                android:text="@{viewModel.thirdDayWeatherAvg}"
-                                app:layout_constraintBottom_toBottomOf="parent"
-                                app:layout_constraintEnd_toEndOf="parent"
-                                app:layout_constraintHorizontal_bias="1.0"
-                                app:layout_constraintStart_toStartOf="parent"
-                                tools:text="Hello" />
-                        </androidx.constraintlayout.widget.ConstraintLayout>
-
-                    </androidx.cardview.widget.CardView>
+         <androidx.recyclerview.widget.RecyclerView
+             android:id="@+id/general_weather_recyclerview"
+             android:layout_width="match_parent"
+             android:layout_height="match_parent"/>
 
                 </LinearLayout>
 

@@ -13,6 +13,8 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.abdullahalomair.businessfinder.*
 import com.abdullahalomair.businessfinder.callbacks.CallBacks
 import com.abdullahalomair.businessfinder.databinding.BusinessDetailsBinding
@@ -37,6 +39,7 @@ import java.util.*
 private const val UPPER_ARROW = "↑"
 private const val DOWN_ARROW  = "↓"
 private const val C_DEGREE    = "℃"
+private const val TIME_DETAIL = "TimeDetailBottomSheet"
 class BusinessDetailFragment : Fragment(), OnMapReadyCallback {
     private lateinit var binding: BusinessDetailsBinding
     private val scope = CoroutineScope(Dispatchers.IO)
@@ -87,6 +90,16 @@ class BusinessDetailFragment : Fragment(), OnMapReadyCallback {
     }
 
     private fun initSetTextsFinal(businessData: Businesses, businessDetails: BusinessDetails) {
+        try {
+            binding.timeDetail.setOnClickListener {
+            val timeDetailSheet =
+                TimeDetailBottomSheet.newInstance(businessDetails.hours[0])
+            timeDetailSheet.show(requireActivity().supportFragmentManager,TIME_DETAIL)
+            }
+        }catch (e: java.lang.Exception){
+
+        }
+
         binding.apply {
             scope.launch {
                 val getImageDrawable = Glide
@@ -132,7 +145,6 @@ class BusinessDetailFragment : Fragment(), OnMapReadyCallback {
     private fun initWeatherForeCast(location: String, businessId: String) {
         val hasNetwork = binding.viewModel?.hasNetwork()
         if (hasNetwork != null){
-
                 scope.launch {
                     val weatherForeCast:WeatherForeCast? = if (hasNetwork) {
                         binding.viewModel?.getWeatherForecast(location, businessId)
@@ -161,37 +173,23 @@ class BusinessDetailFragment : Fragment(), OnMapReadyCallback {
                 val weatherIconRawRes =
                     getWeatherAnimationName(weatherForeCast.current.condition.code)
                 viewModel?.currentWeatherIcon = weatherIconRawRes
+
+                try {
                 val maxDegree = weatherForeCast.forecast.foreCastDay[0].day.maxTemp_c
                 val minDegree = weatherForeCast.forecast.foreCastDay[0].day.minTemp_c
                 val finalTextAvg =
-                    "$maxDegree$C_DEGREE $UPPER_ARROW $minDegree$C_DEGREE $DOWN_ARROW"
+                    "$maxDegree$C_DEGREE$UPPER_ARROW $minDegree$C_DEGREE$DOWN_ARROW"
                 viewModel?.averageWeather = finalTextAvg
-                viewModel?.currentDate = weatherForeCast.forecast.foreCastDay[0].date
-                //Second Day Weather Data
-                val secondWeatherIconRawRes =
-                    getWeatherAnimationName(weatherForeCast.forecast.foreCastDay[1].day.condition.code)
-                val secondDayTemp =
-                    "${weatherForeCast.forecast.foreCastDay[1].day.avgTemp_c}$C_DEGREE"
-                val secondDayMaxAndMinDegrees =
-                    "${weatherForeCast.forecast.foreCastDay[1].day.maxTemp_c}$C_DEGREE$UPPER_ARROW " +
-                            "${weatherForeCast.forecast.foreCastDay[1].day.minTemp_c}$C_DEGREE$DOWN_ARROW"
-                viewModel?.secondDayWeatherIcon = secondWeatherIconRawRes
-                viewModel?.secondDayWeatherDegree = secondDayTemp
-                viewModel?.secondDayWeatherAvg = secondDayMaxAndMinDegrees
-                viewModel?.secondDayDate = weatherForeCast.forecast.foreCastDay[1].date
+                }catch (e: Exception){
+                    viewModel?.averageWeather = requireContext().getString(R.string.error_weather)
+                }
 
-                //Second Day Weather Data
-                val thirdWeatherIconRawRes =
-                    getWeatherAnimationName(weatherForeCast.forecast.foreCastDay[2].day.condition.code)
-                val thirdDayTemp =
-                    "${weatherForeCast.forecast.foreCastDay[2].day.avgTemp_c}$C_DEGREE"
-                val thirdDayMaxAndMinDegrees =
-                    "${weatherForeCast.forecast.foreCastDay[2].day.maxTemp_c}$C_DEGREE$UPPER_ARROW " +
-                            "${weatherForeCast.forecast.foreCastDay[2].day.minTemp_c}$C_DEGREE$DOWN_ARROW"
-                viewModel?.thirdDayWeatherIcon = thirdWeatherIconRawRes
-                viewModel?.thirdDayWeatherDegree = thirdDayTemp
-                viewModel?.thirdDayWeatherAvg = thirdDayMaxAndMinDegrees
-                viewModel?.thirdDayDate = weatherForeCast.forecast.foreCastDay[2].date
+                binding.generalWeatherRecyclerview.apply {
+                    layoutManager = GridLayoutManager(requireContext(),3,
+                        LinearLayoutManager.VERTICAL,
+                        false)
+                    adapter = GeneralWeatherAdapter(weatherForeCast.forecast.foreCastDay,weatherForeCast.location.name)
+                }
             }
         }
     }

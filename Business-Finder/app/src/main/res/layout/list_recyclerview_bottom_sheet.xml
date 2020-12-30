@@ -132,11 +132,11 @@
                 android:id="@+id/weather_status"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginEnd="5dp"
                 android:layout_marginBottom="5dp"
                 android:textSize="20sp"
                 app:layout_constraintBottom_toTopOf="@+id/lottie_animation"
-                app:layout_constraintEnd_toStartOf="@+id/color_view"
+                app:layout_constraintEnd_toEndOf="@+id/lottie_animation"
+                app:layout_constraintStart_toStartOf="@+id/lottie_animation"
                 tools:text="5.5C" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>

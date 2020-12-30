@@ -27,7 +27,7 @@ class MainFragmentViewModel(private val context: Context): BaseObservable() {
     private suspend fun getBusinessesDetailsLocal(id:String):BusinessDetails?{
         return repository.getBusinessDetailLocal(id)
     }
-    suspend fun getWeatherForeCastDetailLocal (location: String):WeatherForeCast? {
+    private suspend fun getWeatherForeCastDetailLocal (location: String):WeatherForeCast? {
         return repository.getWeatherForecastLocal(location)
     }
 

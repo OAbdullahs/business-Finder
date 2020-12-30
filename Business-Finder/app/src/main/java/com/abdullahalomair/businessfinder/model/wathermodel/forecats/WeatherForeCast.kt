@@ -17,7 +17,7 @@ import java.util.*
 data class WeatherForeCast (
     @PrimaryKey var id: UUID = UUID.randomUUID(),
     var businessId:String = "",
-    @Embedded  val location : Location = Location(),
-    @Embedded val current : Current = Current(),
-    @Embedded  val forecast : Forecast = Forecast(),
+    @Embedded  var location : Location = Location(),
+    @Embedded var current : Current = Current(),
+    @Embedded  var forecast : Forecast = Forecast(),
 ):Parcelable

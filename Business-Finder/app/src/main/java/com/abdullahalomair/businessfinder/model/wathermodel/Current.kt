@@ -9,10 +9,10 @@ import kotlinx.android.parcel.Parcelize
 
 @Parcelize
 data class Current (
-    @SerializedName("last_updated_epoch") val lastUpdatedEpoch : Int = 0,
-    @SerializedName("last_updated") val lastUpdated : String = "",
-    @SerializedName("temp_c") val tempC : Double = -20.0,
-    @SerializedName("temp_f") val tempF : Double = 0.0,
-    @SerializedName("is_day") val isDay : Int = 0,
-    @Embedded val condition : Condition = Condition()
+    @SerializedName("last_updated_epoch") var lastUpdatedEpoch : Int = 0,
+    @SerializedName("last_updated") var lastUpdated : String = "",
+    @SerializedName("temp_c") var tempC : Double = -20.0,
+    @SerializedName("temp_f") var tempF : Double = 0.0,
+    @SerializedName("is_day") var isDay : Int = 0,
+    @Embedded var condition : Condition = Condition()
 ):Parcelable

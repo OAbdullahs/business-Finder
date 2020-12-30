@@ -7,12 +7,12 @@ import kotlinx.android.parcel.Parcelize
 
 @Parcelize
 data class Location (
-	val name : String = "",
-	val region : String = "",
-	val country : String ="",
-	val lat : Double = 0.0,
-	val lon : Double = 0.0,
-	@SerializedName("tz_id") val tzId : String = "",
-	@SerializedName("localtime_epoch") val localtimeEpoch : Int =0,
-	val localtime : String = ""
+    var name : String = "",
+    var region : String = "",
+    var country : String ="",
+    var lat : Double = 0.0,
+    var lon : Double = 0.0,
+    @SerializedName("tz_id") var tzId : String = "",
+    @SerializedName("localtime_epoch") var localtimeEpoch : Int =0,
+    var localtime : String = ""
 ):Parcelable
